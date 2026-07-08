@@ -34,6 +34,7 @@ class User extends Authenticatable
         'gender',
         'academic_year',
         'school_name',
+        'specialization',
         'preferred_language',
         'preferred_theme',
         'timezone',

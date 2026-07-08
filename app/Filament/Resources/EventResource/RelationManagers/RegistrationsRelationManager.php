@@ -47,6 +47,12 @@ class RegistrationsRelationManager extends RelationManager
                         Forms\Components\TextInput::make('school_name')
                             ->maxLength(255)
                             ->label('المدرسة / School'),
+                        Forms\Components\Select::make('specialization')
+                            ->options([
+                                'علمي' => 'علمي / Scientific',
+                                'أدبي' => 'أدبي / Literary',
+                            ])
+                            ->label('التخصص / Specialization'),
                         Forms\Components\TextInput::make('academic_year')
                             ->maxLength(50)
                             ->label('السنة الدراسية / Year'),
@@ -100,6 +106,10 @@ class RegistrationsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('user.school_name')
                     ->label('المدرسة / School')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('user.specialization')
+                    ->label('التخصص / Track')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.academic_year')
                     ->label('السنة الدراسية / Year')
                     ->searchable(),

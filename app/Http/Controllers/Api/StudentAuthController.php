@@ -23,6 +23,7 @@ class StudentAuthController extends Controller
             'gender' => 'nullable|string|in:male,female',
             'academic_year' => 'nullable|string|max:50',
             'school_name' => 'nullable|string|max:255',
+            'specialization' => 'nullable|string|in:scientific,literary,علمي,أدبي',
         ]);
 
         $apiToken = Str::random(60);
@@ -36,6 +37,7 @@ class StudentAuthController extends Controller
             'gender' => $validated['gender'] ?? null,
             'academic_year' => $validated['academic_year'] ?? null,
             'school_name' => $validated['school_name'] ?? null,
+            'specialization' => $validated['specialization'] ?? null,
             'status' => 'active',
             'preferred_language' => 'ar',
             'preferred_theme' => 'light',

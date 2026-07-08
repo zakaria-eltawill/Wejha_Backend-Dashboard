@@ -55,7 +55,14 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('academic_year')
                             ->maxLength(255),
                         Forms\Components\TextInput::make('school_name')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->label('المدرسة / School'),
+                        Forms\Components\Select::make('specialization')
+                            ->options([
+                                'علمي' => 'علمي / Scientific',
+                                'أدبي' => 'أدبي / Literary',
+                            ])
+                            ->label('التخصص / Specialization'),
                         Forms\Components\Select::make('status')
                             ->options([
                                 'active' => 'نشط / Active',
@@ -68,7 +75,7 @@ class UserResource extends Resource
                             ->options([
                                 'ar' => 'العربية / Arabic',
                                 'en' => 'الإنجليزية / English',
-                            ])
+                             ])
                             ->default('ar'),
                         Forms\Components\Select::make('preferred_theme')
                             ->options([
@@ -103,6 +110,10 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('phone_number')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('school_name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('specialization')
+                    ->label('التخصص / Track')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
