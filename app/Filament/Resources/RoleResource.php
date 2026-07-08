@@ -23,6 +23,11 @@ class RoleResource extends Resource
         return 'الصلاحيات / Roles';
     }
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

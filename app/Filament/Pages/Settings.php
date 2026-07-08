@@ -20,6 +20,11 @@ class Settings extends Page
         return 'إعدادات النظام / Settings';
     }
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    }
+
     public function getHeading(): string
     {
         return 'إعدادات النظام / System Settings';
