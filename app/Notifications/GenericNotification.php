@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Notifications;
 
 use App\Models\Notification as NotificationModel;
-use Illuminate\Bus\Queueable;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -43,7 +43,27 @@ class GenericNotification extends Notification
     }
 
     /**
-     * Get the array representation of the notification.
+     * Get the database representation using Filament's notification format.
+     * This ensures notifications appear correctly in the Filament bell icon.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        $lang = $notifiable->preferred_language ?? 'ar';
+        $title = $lang === 'ar' ? $this->notificationModel->title_ar : $this->notificationModel->title_en;
+        $content = $lang === 'ar' ? $this->notificationModel->content_ar : $this->notificationModel->content_en;
+
+        return FilamentNotification::make()
+            ->title($title)
+            ->body($content)
+            ->icon('heroicon-o-bell')
+            ->info()
+            ->getDatabaseMessage();
+    }
+
+    /**
+     * Get the array representation of the notification (for non-Filament channels).
      *
      * @return array<string, mixed>
      */
@@ -64,3 +84,4 @@ class GenericNotification extends Notification
         ];
     }
 }
+
