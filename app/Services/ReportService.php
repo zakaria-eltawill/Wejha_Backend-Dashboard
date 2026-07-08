@@ -23,12 +23,16 @@ class ReportService
         // Fetch registrations for event
         $event = \App\Models\Event::with(['registrations.user', 'registrations.attendance'])->findOrFail($eventId);
 
-        $pdf = Pdf::loadView('reports.attendance', [
+        $html = view('reports.attendance', [
             'event' => $event,
             'title_ar' => 'تقرير حضور الفعالية: ' . $event->title_ar,
             'title_en' => 'Event Attendance Report: ' . $event->title_en,
             'generated_at' => now(),
-        ]);
+        ])->render();
+
+        $shapedHtml = $this->shapeHtml($html);
+
+        $pdf = Pdf::loadHTML($shapedHtml);
 
         return $pdf->output();
     }
@@ -37,14 +41,48 @@ class ReportService
     {
         $evaluation = \App\Models\EventEvaluation::with(['event', 'template.questions', 'responses.user', 'responses.question'])->findOrFail($evaluationId);
 
-        $pdf = Pdf::loadView('reports.survey_responses', [
+        $html = view('reports.survey_responses', [
             'evaluation' => $evaluation,
             'title_ar' => 'تقرير تقييم الفعالية: ' . $evaluation->event->title_ar,
             'title_en' => 'Event Survey Report: ' . $evaluation->event->title_en,
             'generated_at' => now(),
-        ]);
+        ])->render();
+
+        $shapedHtml = $this->shapeHtml($html);
+
+        $pdf = Pdf::loadHTML($shapedHtml);
 
         return $pdf->output();
+    }
+
+    /**
+     * Shape Arabic text within HTML text nodes to prevent DomPDF RTL/disconnected text issues.
+     */
+    protected function shapeHtml(string $html): string
+    {
+        $arabic = new \ArPHP\I18N\Arabic('Glyphs');
+        
+        libxml_use_internal_errors(true);
+        
+        $dom = new \DOMDocument();
+        // Load HTML with utf-8 encoding declaration
+        $dom->loadHTML('<?xml encoding="utf-8" ?>' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        
+        $xpath = new \DOMXPath($dom);
+        // Extract text nodes excluding style/script blocks
+        $textNodes = $xpath->query('//text()[not(parent::style or parent::script)]');
+        
+        foreach ($textNodes as $node) {
+            $text = $node->nodeValue;
+            if (preg_match('/[\x{0600}-\x{06FF}]/u', $text)) {
+                $node->nodeValue = $arabic->utf8Glyphs($text);
+            }
+        }
+        
+        $shapedHtml = $dom->saveHTML();
+        libxml_clear_errors();
+        
+        return str_replace('<?xml encoding="utf-8" ?>', '', $shapedHtml);
     }
 
     public function exportAttendanceExcel(string $eventId): BinaryFileResponse

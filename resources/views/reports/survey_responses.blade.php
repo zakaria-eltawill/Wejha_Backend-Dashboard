@@ -4,125 +4,190 @@
     <meta charset="utf-8">
     <title>{{ $title_ar }}</title>
     <style>
+        @font-face {
+            font-family: 'DINNextLTArabic';
+            src: url('{{ public_path("assets/fonts/DINNextLTArabic-Regular.ttf") }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'DINNextLTArabic';
+            src: url('{{ public_path("assets/fonts/DINNextLTArabic-Bold.ttf") }}') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
         body {
-            font-family: 'cairo', 'DejaVu Sans', sans-serif;
-            background-color: #F1F2F2;
-            color: #333;
+            font-family: 'DINNextLTArabic', sans-serif;
+            background-color: #ffffff;
+            color: #1f2937;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             direction: rtl;
             text-align: right;
         }
-        .header {
-            border-bottom: 3px solid #001F8F;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        .header table {
+
+        .header-table {
             width: 100%;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
         }
-        .logo {
-            max-width: 150px;
-        }
+
         .title {
             color: #001F8F;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             margin: 0;
+            line-height: 1.3;
         }
+
         .subtitle {
             color: #FF4900;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        .meta-table {
+            width: 100%;
+            margin-bottom: 20px;
+            font-size: 10px;
+            color: #4b5563;
+            background-color: #f9fafb;
+            border: 1px solid #f3f4f6;
+            border-radius: 6px;
+            padding: 8px 12px;
+        }
+
+        .meta-label {
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .section-title {
+            color: #001F8F;
             font-size: 13px;
-            margin-top: 5px;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-right: 3px solid #FF4900;
+            padding-right: 8px;
         }
-        .meta-info {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        .response-section {
-            background-color: #fff;
+
+        .response-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
             border-right: 4px solid #FF4900;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+
         .question-text {
             font-weight: bold;
             color: #001F8F;
-            font-size: 15px;
-            margin-bottom: 10px;
+            font-size: 12px;
+            margin-bottom: 8px;
         }
+
         .answers-list {
-            margin-right: 15px;
-            font-size: 13px;
+            font-size: 10px;
+            color: #374151;
         }
+
         .answer-item {
-            padding: 5px 0;
-            border-bottom: 1px dashed #eee;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2e8f0;
         }
+
         .answer-item:last-child {
             border-bottom: none;
         }
-        .footer {
-            margin-top: 50px;
-            border-top: 1px solid #ddd;
-            padding-top: 20px;
-            text-align: center;
-            font-size: 11px;
-            color: #777;
-        }
-        .slogan {
-            color: #00389E;
+
+        .participant-name {
             font-weight: bold;
-            font-size: 13px;
-            margin-bottom: 5px;
+            color: #1f2937;
+            margin-left: 5px;
         }
+
+        .footer {
+            margin-top: 40px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+            text-align: center;
+            font-size: 9px;
+            color: #9ca3af;
+        }
+
+        .slogan {
+            color: #001F8F;
+            font-weight: bold;
+            font-size: 11px;
+            margin-bottom: 3px;
+        }
+
         .hashtag {
             color: #FF4900;
             font-weight: bold;
+            margin-bottom: 8px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <table>
-            <tr>
-                <td style="text-align: right; vertical-align: middle;">
-                    <div class="title">{{ $title_ar }}</div>
-                    <div class="subtitle">{{ $title_en }}</div>
-                </td>
-                <td style="text-align: left; vertical-align: middle;">
-                    <img src="{{ public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png') }}" class="logo" alt="Wejha Logo">
-                </td>
-            </tr>
-        </table>
-    </div>
+    <!-- Header Section -->
+    <table class="header-table">
+        <tr>
+            <td style="text-align: right; vertical-align: middle;">
+                <div class="title">{{ $title_ar }}</div>
+                <div class="subtitle">{{ $title_en }}</div>
+            </td>
+            <td style="text-align: left; vertical-align: middle;">
+                <img src="{{ public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png') }}" class="logo" alt="Wejha Logo">
+            </td>
+        </tr>
+    </table>
 
-    <div class="meta-info">
-        <strong>تاريخ التقرير:</strong> {{ $generated_at->format('Y-m-d H:i') }} | 
-        <strong>الفعالية:</strong> {{ $evaluation->event->title_ar }} |
-        <strong>نوع التقييم:</strong> {{ $evaluation->evaluation_type->labelAr() }} |
-        <strong>النموذج المستخدم:</strong> {{ $evaluation->template->name_ar }}
-    </div>
+    <!-- Metadata Section -->
+    <table class="meta-table">
+        <tr>
+            <td width="25%">
+                <span class="meta-label">تاريخ التقرير:</span> {{ $generated_at->format('Y-m-d H:i') }}
+            </td>
+            <td width="30%">
+                <span class="meta-label">الفعالية:</span> {{ $evaluation->event->title_ar }}
+            </td>
+            <td width="20%">
+                <span class="meta-label">نوع التقييم:</span> {{ $evaluation->evaluation_type->labelAr() }}
+            </td>
+            <td width="25%">
+                <span class="meta-label">النموذج:</span> {{ $evaluation->template->name_ar }}
+            </td>
+        </tr>
+    </table>
 
-    <h3 style="color: #001F8F; margin-bottom: 20px; border-bottom: 1px solid #001F8F; padding-bottom: 5px;">إجابات المشاركين حسب الأسئلة</h3>
+    <!-- List Section -->
+    <div class="section-title">إجابات المشاركين حسب الأسئلة / Survey Submissions by Question</div>
 
-    @foreach($evaluation->template->questions as $question)
-        <div class="response-section">
+    @forelse($evaluation->template->questions as $question)
+        <div class="response-card">
             <div class="question-text">س: {{ $question->question_text_ar }} ({{ $question->question_text_en }})</div>
             <div class="answers-list">
                 @php
                     $qResponses = $evaluation->responses->where('question_id', $question->id);
                 @endphp
                 @if($qResponses->isEmpty())
-                    <div style="color: #999; font-style: italic;">لا توجد إجابات على هذا السؤال بعد.</div>
+                    <div style="color: #9ca3af; font-style: italic; padding: 5px 0;">لا توجد إجابات على هذا السؤال بعد.</div>
                 @else
                     @foreach($qResponses as $resp)
                         <div class="answer-item">
-                            <strong>{{ $resp->user->name }}:</strong> 
+                            <span class="participant-name">{{ $resp->user->name }}:</span> 
                             @if($question->type->value === 'checkbox')
                                 {{ $resp->response_json ? implode(', ', $resp->response_json) : '-' }}
                             @else
@@ -133,12 +198,17 @@
                 @endif
             </div>
         </div>
-    @endforeach
+    @empty
+        <div style="text-align: center; color: #9ca3af; padding: 30px;">
+            لا توجد أسئلة مضافة في هذا النموذج بعد.
+        </div>
+    @endforelse
 
+    <!-- Footer Section -->
     <div class="footer">
         <div class="slogan">حسن اختيارك هو بداية مشوارك | خلي ديما عندك وجهة</div>
-        <div class="hashtag">#وجهتك-تبدأ-من-هنا</div>
-        <div style="margin-top: 10px;">تم توليد هذا التقرير تلقائياً بواسطة منصة وجهة الرقمية 2026</div>
+        <div class="hashtag">#وجهتك_تبدأ_من_هنا</div>
+        <div style="margin-top: 5px;">تم توليد هذا التقرير تلقائياً بواسطة منصة وجهة الرقمية 2026</div>
     </div>
 
 </body>
