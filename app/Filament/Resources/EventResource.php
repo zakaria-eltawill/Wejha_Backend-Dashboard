@@ -160,7 +160,7 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->label('الحالة / Status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn ($state): string => match ($state?->value) {
                         'draft' => 'gray',
                         'published' => 'success',
                         'archived' => 'danger',

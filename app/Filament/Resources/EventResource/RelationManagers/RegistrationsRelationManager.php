@@ -116,7 +116,7 @@ class RegistrationsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('status')
                     ->label('الحالة / Status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn ($state): string => match ($state?->value) {
                         'pending' => 'warning',
                         'approved' => 'info',
                         'checked_in' => 'success',
