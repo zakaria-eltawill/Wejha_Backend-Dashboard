@@ -203,6 +203,8 @@ class EventResource extends Resource
     {
         return [
             \App\Filament\Resources\EventResource\RelationManagers\RegistrationsRelationManager::class,
+            \App\Filament\Resources\EventResource\RelationManagers\EvaluationsRelationManager::class,
+            \App\Filament\Resources\EventResource\RelationManagers\SurveyResponsesRelationManager::class,
             \App\Filament\Resources\EventResource\RelationManagers\ActivitiesRelationManager::class,
         ];
     }

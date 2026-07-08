@@ -85,6 +85,21 @@ class Event extends Model
     }
 
     /**
+     * Get the survey responses submitted for this event's evaluations.
+     */
+    public function surveyResponses(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            SurveyResponse::class,
+            EventEvaluation::class,
+            'event_id',
+            'event_evaluation_id',
+            'id',
+            'id'
+        );
+    }
+
+    /**
      * Get the activities/timeline for the event.
      */
     public function activities(): HasMany
