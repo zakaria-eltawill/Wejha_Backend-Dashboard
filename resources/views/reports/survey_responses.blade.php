@@ -53,7 +53,7 @@
         }
 
         .logo {
-            height: 75px;
+            height: 100px;
         }
 
         .meta-table {
@@ -77,50 +77,38 @@
             font-size: 13px;
             font-weight: bold;
             margin-top: 25px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-right: 3px solid #FF4900;
             padding-right: 8px;
             text-align: right;
         }
 
-        .response-card {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin-bottom: 15px;
-            border-right: 4px solid #FF4900;
-            text-align: right;
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
         }
 
-        .question-text {
+        .data-table th {
+            background-color: #001F8F;
+            color: #ffffff;
             font-weight: bold;
-            color: #001F8F;
-            font-size: 12px;
-            margin-bottom: 8px;
+            padding: 8px 10px;
+            font-size: 10px;
             text-align: right;
+            border: 1px solid #001F8F;
         }
 
-        .answers-list {
+        .data-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e5e7eb;
             font-size: 10px;
             color: #374151;
             text-align: right;
         }
 
-        .answer-item {
-            padding: 6px 0;
-            border-bottom: 1px dashed #e2e8f0;
-            text-align: right;
-        }
-
-        .answer-item:last-child {
-            border-bottom: none;
-        }
-
-        .participant-name {
-            font-weight: bold;
-            color: #1f2937;
-            margin-left: 5px;
+        .data-table tr:nth-child(even) td {
+            background-color: #f8fafc;
         }
 
         .footer {
@@ -183,30 +171,50 @@
     <div class="section-title">إجابات المشاركين حسب الأسئلة / Survey Submissions by Question</div>
 
     @forelse($evaluation->template->questions as $question)
-        <div class="response-card">
-            <div class="question-text">س: {{ $question->question_text_ar }} ({{ $question->question_text_en }})</div>
-            <div class="answers-list">
-                @php
+        <!-- Question Section Title -->
+        <div class="section-title" style="margin-top: 15px; margin-bottom: 8px; font-size: 11px; color: #FF4900;">
+            س: {{ $question->question_text_ar }} ({{ $question->question_text_en }})
+        </div>
+
+        <!-- Responses Data Table (Visually RTL in LTR mode) -->
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th width="45%">الإجابة / Answer</th>
+                    <th width="15%" style="text-align: center;">التخصص / Track</th>
+                    <th width="15%">المدرسة / School</th>
+                    <th width="20%" style="text-align: right;">اسم المشارك / Participant Name</th>
+                    <th width="5%" style="text-align: center;">#</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php 
+                    $index = 1; 
                     $qResponses = $evaluation->responses->where('question_id', $question->id);
                 @endphp
-                @if($qResponses->isEmpty())
-                    <div style="color: #9ca3af; font-style: italic; padding: 5px 0;">لا توجد إجابات على هذا السؤال بعد.</div>
-                @else
-                    @foreach($qResponses as $resp)
-                        <div class="answer-item">
-                            <span>
-                                @if($question->type->value === 'checkbox')
-                                    {{ $resp->response_json ? implode(', ', $resp->response_json) : '-' }}
-                                @else
-                                    {{ $resp->response_text ?? '-' }}
-                                @endif
-                            </span>
-                            <span class="participant-name">:{{ $resp->user->name }}</span> 
-                        </div>
-                    @endforeach
-                @endif
-            </div>
-        </div>
+                @forelse($qResponses as $resp)
+                    <tr>
+                        <td>
+                            @if($question->type->value === 'checkbox')
+                                {{ $resp->response_json ? implode(', ', $resp->response_json) : '-' }}
+                            @else
+                                {{ $resp->response_text ?? '-' }}
+                            @endif
+                        </td>
+                        <td style="text-align: center;">{{ $resp->user->specialization ?? '-' }}</td>
+                        <td>{{ $resp->user->school_name ?? '-' }}</td>
+                        <td style="font-weight: bold; text-align: right;">{{ $resp->user->name }}</td>
+                        <td style="text-align: center;">{{ $index++ }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #9ca3af; padding: 12px; font-size: 9px;">
+                            لا توجد إجابات على هذا السؤال بعد.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     @empty
         <div style="text-align: center; color: #9ca3af; padding: 30px;">
             لا توجد أسئلة مضافة في هذا النموذج بعد.

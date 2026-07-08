@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="ltr">
+
 <head>
     <meta charset="utf-8">
     <title>{{ $title_ar }}</title>
@@ -10,6 +11,7 @@
             font-weight: normal;
             font-style: normal;
         }
+
         @font-face {
             font-family: 'DINNextLTArabic';
             src: url('{{ public_path("assets/fonts/DINNextLTArabic-Bold.ttf") }}') format('truetype');
@@ -53,7 +55,7 @@
         }
 
         .logo {
-            height: 75px;
+            height: 100px;
         }
 
         .meta-table {
@@ -182,6 +184,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Header Section (Visually RTL in LTR mode) -->
@@ -207,7 +210,8 @@
                 <span>{{ $event->venue }}</span> <span class="meta-label">:موقع الفعالية</span>
             </td>
             <td width="33%" style="text-align: right;">
-                <span>{{ \Carbon\Carbon::parse($event->event_date)->format('Y-m-d') }}</span> <span class="meta-label">:تاريخ الفعالية</span>
+                <span>{{ \Carbon\Carbon::parse($event->event_date)->format('Y-m-d') }}</span> <span
+                    class="meta-label">:تاريخ الفعالية</span>
             </td>
         </tr>
     </table>
@@ -305,4 +309,5 @@
     </div>
 
 </body>
+
 </html>
