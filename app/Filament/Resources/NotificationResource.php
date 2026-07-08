@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\Communications;
 use App\Models\Notification;
 use App\Services\NotificationService;
 use Filament\Forms;
@@ -16,12 +15,12 @@ use Filament\Tables\Table;
 class NotificationResource extends Resource
 {
     protected static ?string $model = Notification::class;
-    protected static ?string $cluster = Communications::class;
-    protected static ?string $navigationIcon = 'heroicon-o-bell';
+    protected static ?string $navigationIcon = 'heroicon-o-envelope';
+    protected static ?int $navigationSort = 5;
 
     public static function getNavigationLabel(): string
     {
-        return 'الإشعارات والتعميمات / Send Alerts';
+        return 'الإشعارات والاتصالات / Notifications';
     }
 
     public static function form(Form $form): Form
