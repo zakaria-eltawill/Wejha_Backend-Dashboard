@@ -56,6 +56,14 @@ class SurveyTemplateResource extends Resource
                         Forms\Components\TextInput::make('category')
                             ->label('التصنيف / Category')
                             ->maxLength(255),
+                        Forms\Components\Select::make('type')
+                            ->label('نوع الاستبيان / Survey Type')
+                            ->options([
+                                'pre' => 'استبيان قبلي (عند التسجيل) / Pre-Assessment',
+                                'post' => 'استبيان بعدي (بعد الحضور) / Post-Assessment',
+                            ])
+                            ->required()
+                            ->default('pre'),
                         Forms\Components\Toggle::make('is_reusable')
                             ->label('قابل لإعادة الاستخدام / Reusable')
                             ->default(true),
@@ -122,6 +130,19 @@ class SurveyTemplateResource extends Resource
                 Tables\Columns\TextColumn::make('version')
                     ->label('الإصدار / Version')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('نوع الاستبيان / Type')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pre' => 'info',
+                        'post' => 'success',
+                        default => 'primary',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pre' => 'استبيان قبلي / Pre-Assessment',
+                        'post' => 'استبيان بعدي / Post-Assessment',
+                        default => $state,
+                    }),
                 Tables\Columns\TextColumn::make('status')
                     ->label('الحالة / Status')
                     ->badge()

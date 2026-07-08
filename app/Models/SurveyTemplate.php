@@ -23,6 +23,7 @@ class SurveyTemplate extends Model
         'version',
         'status',
         'category',
+        'type',
         'is_reusable',
         'description_ar',
         'description_en',
