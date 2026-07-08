@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('type');
             $table->string('notifiable_type');
             $table->uuid('notifiable_id'); // Using UUID for users id
-            $table->text('data');
+            $table->json('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
 
