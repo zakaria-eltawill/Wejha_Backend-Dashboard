@@ -27,6 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->databaseNotifications()
             ->brandName('منصة وجهة 2026')
             ->brandLogo(asset('assets/logo/wejha_logo_vertical_blue_navy_gradient_transparent.png'))
             ->darkModeBrandLogo(asset('assets/logo/wejha_logo_vertical_light_gradient_transparent.png'))

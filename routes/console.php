@@ -8,3 +8,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 \Illuminate\Support\Facades\Schedule::command('app:archive-past-events')->everyMinute();
+\Illuminate\Support\Facades\Schedule::command('app:send-scheduled-notifications')->everyMinute();

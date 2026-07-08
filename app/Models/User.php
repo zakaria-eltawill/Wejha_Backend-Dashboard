@@ -100,4 +100,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(AuditLog::class);
     }
+
+    /**
+     * Custom database notifications relationship for Filament top-bar notifications.
+     */
+    public function notifications()
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')->latest();
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->notifications()->unread();
+    }
 }

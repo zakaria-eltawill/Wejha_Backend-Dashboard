@@ -51,7 +51,13 @@ class GenericNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
+        $lang = $notifiable->preferred_language ?? 'ar';
+        $title = $lang === 'ar' ? $this->notificationModel->title_ar : $this->notificationModel->title_en;
+        $content = $lang === 'ar' ? $this->notificationModel->content_ar : $this->notificationModel->content_en;
+
         return [
+            'title' => $title,
+            'body' => $content,
             'notification_id' => $this->notificationModel->id,
             'title_ar' => $this->notificationModel->title_ar,
             'title_en' => $this->notificationModel->title_en,
