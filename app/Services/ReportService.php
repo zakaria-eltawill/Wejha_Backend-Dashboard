@@ -23,11 +23,18 @@ class ReportService
         // Fetch registrations for event
         $event = \App\Models\Event::with(['registrations.user', 'registrations.attendance'])->findOrFail($eventId);
 
+        $logoPath = public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png');
+        $logoBase64 = '';
+        if (file_exists($logoPath)) {
+            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
         $html = view('reports.attendance', [
             'event' => $event,
             'title_ar' => 'تقرير حضور الفعالية: ' . $event->title_ar,
             'title_en' => 'Event Attendance Report: ' . $event->title_en,
             'generated_at' => now(),
+            'logo_base64' => $logoBase64,
         ])->render();
 
         $shapedHtml = $this->shapeHtml($html);
@@ -41,11 +48,18 @@ class ReportService
     {
         $evaluation = \App\Models\EventEvaluation::with(['event', 'template.questions', 'responses.user', 'responses.question'])->findOrFail($evaluationId);
 
+        $logoPath = public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png');
+        $logoBase64 = '';
+        if (file_exists($logoPath)) {
+            $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
         $html = view('reports.survey_responses', [
             'evaluation' => $evaluation,
             'title_ar' => 'تقرير تقييم الفعالية: ' . $evaluation->event->title_ar,
             'title_en' => 'Event Survey Report: ' . $evaluation->event->title_en,
             'generated_at' => now(),
+            'logo_base64' => $logoBase64,
         ])->render();
 
         $shapedHtml = $this->shapeHtml($html);

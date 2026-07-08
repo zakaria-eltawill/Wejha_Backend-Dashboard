@@ -188,7 +188,7 @@
     <table class="header-table">
         <tr>
             <td style="text-align: left; vertical-align: middle;" width="30%">
-                <img src="{{ public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png') }}" class="logo" alt="Wejha Logo">
+                <img src="{{ $logo_base64 }}" class="logo" alt="Wejha Logo">
             </td>
             <td style="text-align: right; vertical-align: middle;" width="70%">
                 <div class="title">{{ $event->title_ar }}</div>
@@ -201,13 +201,13 @@
     <table class="meta-table">
         <tr>
             <td width="33%" style="text-align: left;">
-                <span class="meta-label">تاريخ التقرير:</span> {{ $generated_at->format('Y-m-d H:i') }}
+                <span>{{ $generated_at->format('Y-m-d H:i') }}</span> <span class="meta-label">:تاريخ التقرير</span>
             </td>
             <td width="33%" style="text-align: center;">
-                <span class="meta-label">موقع الفعالية:</span> {{ $event->venue }}
+                <span>{{ $event->venue }}</span> <span class="meta-label">:موقع الفعالية</span>
             </td>
             <td width="33%" style="text-align: right;">
-                <span class="meta-label">تاريخ الفعالية:</span> {{ \Carbon\Carbon::parse($event->event_date)->format('Y-m-d') }}
+                <span>{{ \Carbon\Carbon::parse($event->event_date)->format('Y-m-d') }}</span> <span class="meta-label">:تاريخ الفعالية</span>
             </td>
         </tr>
     </table>

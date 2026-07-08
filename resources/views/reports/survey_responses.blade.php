@@ -152,7 +152,7 @@
     <table class="header-table">
         <tr>
             <td style="text-align: left; vertical-align: middle;" width="30%">
-                <img src="{{ public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png') }}" class="logo" alt="Wejha Logo">
+                <img src="{{ $logo_base64 }}" class="logo" alt="Wejha Logo">
             </td>
             <td style="text-align: right; vertical-align: middle;" width="70%">
                 <div class="title">{{ $title_ar }}</div>
@@ -165,16 +165,16 @@
     <table class="meta-table">
         <tr>
             <td width="25%" style="text-align: left;">
-                <span class="meta-label">تاريخ التقرير:</span> {{ $generated_at->format('Y-m-d H:i') }}
+                <span>{{ $generated_at->format('Y-m-d H:i') }}</span> <span class="meta-label">:تاريخ التقرير</span>
             </td>
             <td width="25%" style="text-align: center;">
-                <span class="meta-label">النموذج:</span> {{ $evaluation->template->name_ar }}
+                <span>{{ $evaluation->template->name_ar }}</span> <span class="meta-label">:النموذج</span>
             </td>
             <td width="20%" style="text-align: center;">
-                <span class="meta-label">نوع التقييم:</span> {{ $evaluation->evaluation_type->labelAr() }}
+                <span>{{ $evaluation->evaluation_type->labelAr() }}</span> <span class="meta-label">:نوع التقييم</span>
             </td>
             <td width="30%" style="text-align: right;">
-                <span class="meta-label">الفعالية:</span> {{ $evaluation->event->title_ar }}
+                <span>{{ $evaluation->event->title_ar }}</span> <span class="meta-label">:الفعالية</span>
             </td>
         </tr>
     </table>
@@ -194,12 +194,14 @@
                 @else
                     @foreach($qResponses as $resp)
                         <div class="answer-item">
-                            <span class="participant-name">{{ $resp->user->name }}:</span> 
-                            @if($question->type->value === 'checkbox')
-                                {{ $resp->response_json ? implode(', ', $resp->response_json) : '-' }}
-                            @else
-                                {{ $resp->response_text ?? '-' }}
-                            @endif
+                            <span>
+                                @if($question->type->value === 'checkbox')
+                                    {{ $resp->response_json ? implode(', ', $resp->response_json) : '-' }}
+                                @else
+                                    {{ $resp->response_text ?? '-' }}
+                                @endif
+                            </span>
+                            <span class="participant-name">:{{ $resp->user->name }}</span> 
                         </div>
                     @endforeach
                 @endif
