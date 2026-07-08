@@ -41,7 +41,7 @@ class StudentAuthController extends Controller
             'status' => 'active',
             'preferred_language' => 'ar',
             'preferred_theme' => 'light',
-            'timezone' => 'Asia/Riyadh',
+            'timezone' => config('app.timezone', 'Africa/Tripoli'),
         ]);
 
         // Assign Student role if it exists

@@ -32,7 +32,7 @@ class Settings extends Page
             'site_name_ar' => 'منصة وجهة الرقمية',
             'site_name_en' => 'Wejha Digital Platform',
             'default_language' => 'ar',
-            'timezone' => 'Asia/Riyadh',
+            'timezone' => config('app.timezone', 'Africa/Tripoli'),
             'allow_registration' => true,
             'smtp_host' => config('mail.mailers.smtp.host', '127.0.0.1'),
             'smtp_port' => config('mail.mailers.smtp.port', '1025'),
@@ -64,7 +64,7 @@ class Settings extends Page
                                 Forms\Components\Select::make('timezone')
                                     ->label('المنطقة الزمنية / Timezone')
                                     ->options([
-                                        'Asia/Riyadh' => 'توقيت الرياض (Asia/Riyadh)',
+                                        'Africa/Tripoli' => 'توقيت طرابلس (Africa/Tripoli)',
                                         'UTC' => 'التوقيت العالمي (UTC)',
                                     ])
                                     ->required(),

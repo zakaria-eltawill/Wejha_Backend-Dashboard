@@ -28,7 +28,7 @@ class ArchivePastEvents extends Command
      */
     public function handle()
     {
-        $now = Carbon::now('Asia/Riyadh');
+        $now = Carbon::now(config('app.timezone', 'Africa/Tripoli'));
         $todayDate = $now->toDateString();
         $currentTime = $now->toTimeString();
 

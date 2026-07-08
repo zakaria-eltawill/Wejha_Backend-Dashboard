@@ -12,7 +12,7 @@ class EventApiController extends Controller
 {
     public function index(): JsonResponse
     {
-        $now = \Carbon\Carbon::now('Asia/Riyadh');
+        $now = \Carbon\Carbon::now(config('app.timezone', 'Africa/Tripoli'));
         $todayDate = $now->toDateString();
         $currentTime = $now->toTimeString();
 

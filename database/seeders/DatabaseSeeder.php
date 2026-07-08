@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
                 'status' => 'active',
                 'preferred_language' => 'ar',
                 'preferred_theme' => 'system',
-                'timezone' => 'Asia/Riyadh',
+                'timezone' => config('app.timezone', 'Africa/Tripoli'),
             ]
         );
 
