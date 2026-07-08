@@ -155,6 +155,11 @@ class EventResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('scan')
+                    ->label('مسح / Scan')
+                    ->icon('heroicon-m-qr-code')
+                    ->color('warning')
+                    ->url(fn (Event $record) => static::getUrl('scan', ['record' => $record])),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -179,6 +184,7 @@ class EventResource extends Resource
             'index' => \App\Filament\Resources\EventResource\Pages\ListEvents::route('/'),
             'create' => \App\Filament\Resources\EventResource\Pages\CreateEvent::route('/create'),
             'edit' => \App\Filament\Resources\EventResource\Pages\EditEvent::route('/{record}/edit'),
+            'scan' => \App\Filament\Resources\EventResource\Pages\ScanEvent::route('/{record}/scan'),
         ];
     }
 }

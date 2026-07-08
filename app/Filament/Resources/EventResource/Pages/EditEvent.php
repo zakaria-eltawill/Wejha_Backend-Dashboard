@@ -15,6 +15,11 @@ class EditEvent extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('scan')
+                ->label('مسح التذاكر / Scan QR')
+                ->icon('heroicon-m-qr-code')
+                ->color('warning')
+                ->url(fn (): string => static::getResource()::getUrl('scan', ['record' => $this->getRecord()])),
             Actions\DeleteAction::make(),
         ];
     }

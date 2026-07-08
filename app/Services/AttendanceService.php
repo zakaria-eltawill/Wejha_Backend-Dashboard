@@ -25,13 +25,18 @@ class AttendanceService
         string $qrHash,
         ?string $scannerUserId = null,
         ?string $device = null,
-        ?string $ipAddress = null
+        ?string $ipAddress = null,
+        ?string $eventId = null
     ): Attendance {
-        return DB::transaction(function () use ($qrHash, $scannerUserId, $device, $ipAddress) {
+        return DB::transaction(function () use ($qrHash, $scannerUserId, $device, $ipAddress, $eventId) {
             // 1. Validate QR Hash
             $registration = $this->registrationRepository->findByQrHash($qrHash);
             if (!$registration) {
                 throw new InvalidQRCodeException('Invalid QR ticket hash.');
+            }
+
+            if ($eventId && $registration->event_id !== $eventId) {
+                throw new InvalidQRCodeException('تذكرة خاطئة: هذه التذكرة تابعة لفعالية أخرى / Invalid ticket: This ticket belongs to another event.');
             }
 
             // 2. Check Event status and dates (optional check)

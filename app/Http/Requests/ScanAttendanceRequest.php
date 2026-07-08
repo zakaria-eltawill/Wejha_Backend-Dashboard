@@ -18,6 +18,7 @@ class ScanAttendanceRequest extends FormRequest
         return [
             'qr_hash' => ['required', 'string', 'max:255'],
             'device' => ['nullable', 'string', 'max:255'],
+            'event_id' => ['nullable', 'string', 'exists:events,id'],
         ];
     }
 }

@@ -29,7 +29,38 @@ class RegistrationsRelationManager extends RelationManager
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
                     ->searchable()
-                    ->required(),
+                    ->required()
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->label('الاسم / Name'),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->unique('users', 'email')
+                            ->maxLength(255)
+                            ->label('البريد الإلكتروني / Email'),
+                        Forms\Components\TextInput::make('phone_number')
+                            ->maxLength(20)
+                            ->label('رقم الجوال / Phone'),
+                        Forms\Components\TextInput::make('school_name')
+                            ->maxLength(255)
+                            ->label('المدرسة / School'),
+                        Forms\Components\TextInput::make('academic_year')
+                            ->maxLength(50)
+                            ->label('السنة الدراسية / Year'),
+                        Forms\Components\Select::make('gender')
+                            ->options([
+                                'male' => 'ذكر / Male',
+                                'female' => 'أنثى / Female',
+                            ])
+                            ->label('الجنس / Gender'),
+                        Forms\Components\Hidden::make('password')
+                            ->default(fn () => \Illuminate\Support\Facades\Hash::make('wejha2026password')),
+                        Forms\Components\Hidden::make('status')
+                            ->default('active'),
+                    ]),
                 Forms\Components\Select::make('status')
                     ->options([
                         'pending' => 'قيد الانتظار / Pending',

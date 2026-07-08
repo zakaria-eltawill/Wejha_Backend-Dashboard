@@ -12,6 +12,7 @@ class QRScanner extends Page
     protected static ?string $cluster = EventManagement::class;
     protected static ?string $navigationIcon = 'heroicon-o-qr-code';
     protected static string $view = 'filament.pages.qr-scanner';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getNavigationLabel(): string
     {

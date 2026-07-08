@@ -22,7 +22,8 @@ class AttendanceApiController extends Controller
                 $request->input('qr_hash'),
                 auth()->id(), // Scanner user
                 $request->input('device', 'Web Camera'),
-                $request->ip()
+                $request->ip(),
+                $request->input('event_id')
             );
 
             $registration = $attendance->registration;
