@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\EventManagement;
 use App\Models\Event;
 use App\Enums\EventType;
 use App\Enums\EventStatus;
@@ -18,12 +17,11 @@ use Filament\Forms\Components\Wizard;
 class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
-    protected static ?string $cluster = EventManagement::class;
-    protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
     public static function getNavigationLabel(): string
     {
-        return 'الفعاليات / Events';
+        return 'إدارة الفعاليات / Events';
     }
 
     public static function form(Form $form): Form
