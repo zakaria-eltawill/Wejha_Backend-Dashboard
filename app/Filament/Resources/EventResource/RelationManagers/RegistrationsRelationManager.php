@@ -56,12 +56,21 @@ class RegistrationsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
+                 Tables\Columns\TextColumn::make('user.name')
                     ->label('اسم المشارك / Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.email')
                     ->label('البريد الإلكتروني / Email')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('user.phone_number')
+                    ->label('رقم الجوال / Phone')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('user.school_name')
+                    ->label('المدرسة / School')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('user.academic_year')
+                    ->label('السنة الدراسية / Year')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('الحالة / Status')
