@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\UserManagement;
+
 use Spatie\Permission\Models\Role;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,8 +15,8 @@ use Filament\Tables\Table;
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
-    protected static ?string $cluster = UserManagement::class;
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getNavigationLabel(): string
     {

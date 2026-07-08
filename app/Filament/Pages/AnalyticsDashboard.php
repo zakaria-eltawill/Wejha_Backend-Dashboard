@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
-use App\Filament\Clusters\SystemReports;
+
 use App\Models\Event;
 use App\Models\EventEvaluation;
 use App\Services\ReportService;
@@ -16,16 +16,16 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AnalyticsDashboard extends Page
 {
-    protected static ?string $cluster = SystemReports::class;
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
     protected static string $view = 'filament.pages.analytics-dashboard';
+    protected static ?int $navigationSort = 4;
 
     public ?string $event_id = null;
     public ?string $evaluation_id = null;
 
     public static function getNavigationLabel(): string
     {
-        return 'مركز التقارير والتحليلات / Analytics';
+        return 'التقارير / Reports';
     }
 
     public function getHeading(): string

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\UserManagement;
+
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -16,12 +16,12 @@ use Illuminate\Support\Facades\Hash;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static ?string $cluster = UserManagement::class;
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?int $navigationSort = 6;
 
     public static function getNavigationLabel(): string
     {
-        return 'المستخدمون / Users';
+        return 'إدارة المستخدمين / Users';
     }
 
     public static function canViewAny(): bool

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\SystemReports;
+
 use App\Models\AuditLog;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,8 +15,8 @@ use Filament\Tables\Table;
 class AuditLogResource extends Resource
 {
     protected static ?string $model = AuditLog::class;
-    protected static ?string $cluster = SystemReports::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-magnifying-glass';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getNavigationLabel(): string
     {
