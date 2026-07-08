@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="ltr">
 <head>
     <meta charset="utf-8">
     <title>{{ $title_ar }}</title>
@@ -23,7 +23,7 @@
             color: #1f2937;
             margin: 0;
             padding: 10px;
-            direction: rtl;
+            direction: ltr;
             text-align: right;
         }
 
@@ -40,6 +40,7 @@
             font-weight: bold;
             margin: 0;
             line-height: 1.3;
+            text-align: right;
         }
 
         .subtitle {
@@ -48,6 +49,7 @@
             font-weight: bold;
             margin-top: 4px;
             text-transform: uppercase;
+            text-align: right;
         }
 
         .logo {
@@ -78,6 +80,7 @@
             margin-bottom: 15px;
             border-right: 3px solid #FF4900;
             padding-right: 8px;
+            text-align: right;
         }
 
         .response-card {
@@ -87,6 +90,7 @@
             padding: 12px 15px;
             margin-bottom: 15px;
             border-right: 4px solid #FF4900;
+            text-align: right;
         }
 
         .question-text {
@@ -94,16 +98,19 @@
             color: #001F8F;
             font-size: 12px;
             margin-bottom: 8px;
+            text-align: right;
         }
 
         .answers-list {
             font-size: 10px;
             color: #374151;
+            text-align: right;
         }
 
         .answer-item {
             padding: 6px 0;
             border-bottom: 1px dashed #e2e8f0;
+            text-align: right;
         }
 
         .answer-item:last-child {
@@ -141,38 +148,38 @@
 </head>
 <body>
 
-    <!-- Header Section -->
+    <!-- Header Section (Visually RTL in LTR mode) -->
     <table class="header-table">
         <tr>
-            <td style="text-align: right; vertical-align: middle;">
+            <td style="text-align: left; vertical-align: middle;" width="30%">
+                <img src="{{ public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png') }}" class="logo" alt="Wejha Logo">
+            </td>
+            <td style="text-align: right; vertical-align: middle;" width="70%">
                 <div class="title">{{ $title_ar }}</div>
                 <div class="subtitle">{{ $title_en }}</div>
             </td>
-            <td style="text-align: left; vertical-align: middle;">
-                <img src="{{ public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png') }}" class="logo" alt="Wejha Logo">
-            </td>
         </tr>
     </table>
 
-    <!-- Metadata Section -->
+    <!-- Metadata Section (Visually RTL in LTR mode) -->
     <table class="meta-table">
         <tr>
-            <td width="25%">
+            <td width="25%" style="text-align: left;">
                 <span class="meta-label">تاريخ التقرير:</span> {{ $generated_at->format('Y-m-d H:i') }}
             </td>
-            <td width="30%">
-                <span class="meta-label">الفعالية:</span> {{ $evaluation->event->title_ar }}
+            <td width="25%" style="text-align: center;">
+                <span class="meta-label">النموذج:</span> {{ $evaluation->template->name_ar }}
             </td>
-            <td width="20%">
+            <td width="20%" style="text-align: center;">
                 <span class="meta-label">نوع التقييم:</span> {{ $evaluation->evaluation_type->labelAr() }}
             </td>
-            <td width="25%">
-                <span class="meta-label">النموذج:</span> {{ $evaluation->template->name_ar }}
+            <td width="30%" style="text-align: right;">
+                <span class="meta-label">الفعالية:</span> {{ $evaluation->event->title_ar }}
             </td>
         </tr>
     </table>
 
-    <!-- List Section -->
+    <!-- List Section Header -->
     <div class="section-title">إجابات المشاركين حسب الأسئلة / Survey Submissions by Question</div>
 
     @forelse($evaluation->template->questions as $question)

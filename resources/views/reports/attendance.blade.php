@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="ltr">
 <head>
     <meta charset="utf-8">
     <title>{{ $title_ar }}</title>
@@ -23,7 +23,7 @@
             color: #1f2937;
             margin: 0;
             padding: 10px;
-            direction: rtl;
+            direction: ltr;
             text-align: right;
         }
 
@@ -40,6 +40,7 @@
             font-weight: bold;
             margin: 0;
             line-height: 1.3;
+            text-align: right;
         }
 
         .subtitle {
@@ -48,6 +49,7 @@
             font-weight: bold;
             margin-top: 4px;
             text-transform: uppercase;
+            text-align: right;
         }
 
         .logo {
@@ -107,6 +109,7 @@
             margin-bottom: 12px;
             border-right: 3px solid #FF4900;
             padding-right: 8px;
+            text-align: right;
         }
 
         .data-table {
@@ -130,6 +133,7 @@
             border-bottom: 1px solid #e5e7eb;
             font-size: 10px;
             color: #374151;
+            text-align: right;
         }
 
         .data-table tr:nth-child(even) td {
@@ -180,57 +184,37 @@
 </head>
 <body>
 
-    <!-- Header Section -->
+    <!-- Header Section (Visually RTL in LTR mode) -->
     <table class="header-table">
         <tr>
-            <td style="text-align: right; vertical-align: middle;">
+            <td style="text-align: left; vertical-align: middle;" width="30%">
+                <img src="{{ public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png') }}" class="logo" alt="Wejha Logo">
+            </td>
+            <td style="text-align: right; vertical-align: middle;" width="70%">
                 <div class="title">{{ $event->title_ar }}</div>
                 <div class="subtitle">{{ $event->title_en }}</div>
-            </td>
-            <td style="text-align: left; vertical-align: middle;">
-                <img src="{{ public_path('assets/logo/wejha_logo_vertical_multi_gradient_transparent.png') }}" class="logo" alt="Wejha Logo">
             </td>
         </tr>
     </table>
 
-    <!-- Metadata Section -->
+    <!-- Metadata Section (Visually RTL in LTR mode) -->
     <table class="meta-table">
         <tr>
-            <td width="33%">
+            <td width="33%" style="text-align: left;">
                 <span class="meta-label">تاريخ التقرير:</span> {{ $generated_at->format('Y-m-d H:i') }}
             </td>
-            <td width="33%">
+            <td width="33%" style="text-align: center;">
                 <span class="meta-label">موقع الفعالية:</span> {{ $event->venue }}
             </td>
-            <td width="33%">
+            <td width="33%" style="text-align: right;">
                 <span class="meta-label">تاريخ الفعالية:</span> {{ \Carbon\Carbon::parse($event->event_date)->format('Y-m-d') }}
             </td>
         </tr>
     </table>
 
-    <!-- Statistics Section -->
+    <!-- Statistics Section (Visually RTL in LTR mode) -->
     <table class="stats-table">
         <tr>
-            <td width="25%">
-                <div class="stat-card">
-                    <div class="stat-val">{{ $event->capacity }}</div>
-                    <div class="stat-lbl">السعة الاستيعابية / Capacity</div>
-                </div>
-            </td>
-            <td width="25%">
-                <div class="stat-card">
-                    <div class="stat-val">{{ $event->registrations->count() }}</div>
-                    <div class="stat-lbl">عدد المسجلين / Registered</div>
-                </div>
-            </td>
-            <td width="25%">
-                <div class="stat-card">
-                    <div class="stat-val">
-                        {{ $event->registrations->where('status', \App\Enums\RegistrationStatus::CHECKED_IN)->count() }}
-                    </div>
-                    <div class="stat-lbl">عدد الحاضرين / Checked-In</div>
-                </div>
-            </td>
             <td width="25%">
                 <div class="stat-card">
                     <div class="stat-val">
@@ -244,33 +228,52 @@
                     <div class="stat-lbl">نسبة الحضور / Attendance Rate</div>
                 </div>
             </td>
+            <td width="25%">
+                <div class="stat-card">
+                    <div class="stat-val">
+                        {{ $event->registrations->where('status', \App\Enums\RegistrationStatus::CHECKED_IN)->count() }}
+                    </div>
+                    <div class="stat-lbl">عدد الحاضرين / Checked-In</div>
+                </div>
+            </td>
+            <td width="25%">
+                <div class="stat-card">
+                    <div class="stat-val">{{ $event->registrations->count() }}</div>
+                    <div class="stat-lbl">عدد المسجلين / Registered</div>
+                </div>
+            </td>
+            <td width="25%">
+                <div class="stat-card">
+                    <div class="stat-val">{{ $event->capacity }}</div>
+                    <div class="stat-lbl">السعة الاستيعابية / Capacity</div>
+                </div>
+            </td>
         </tr>
     </table>
 
-    <!-- List Section -->
+    <!-- List Section Header -->
     <div class="section-title">قائمة حضور المشاركين / Event Attendance List</div>
 
+    <!-- Data Table (Visually RTL in LTR mode) -->
     <table class="data-table">
         <thead>
             <tr>
-                <th width="5%">#</th>
-                <th width="25%">اسم المشارك / Participant Name</th>
-                <th width="25%">البريد الإلكتروني / Email</th>
+                <th width="12%" style="text-align: center;">وقت الحضور / Checked-In At</th>
+                <th width="12%" style="text-align: center;">حالة الحضور / Status</th>
+                <th width="10%" style="text-align: center;">التخصص / Track</th>
                 <th width="20%">المدرسة / School</th>
-                <th width="10%">التخصص / Track</th>
-                <th width="10%">حالة الحضور / Status</th>
-                <th width="10%">وقت الحضور / Checked-In At</th>
+                <th width="23%">البريد الإلكتروني / Email</th>
+                <th width="18%" style="text-align: right;">اسم المشارك / Participant Name</th>
+                <th width="5%" style="text-align: center;">#</th>
             </tr>
         </thead>
         <tbody>
             @php $index = 1; @endphp
             @forelse($event->registrations as $reg)
                 <tr>
-                    <td style="text-align: center;">{{ $index++ }}</td>
-                    <td style="font-weight: bold;">{{ $reg->user->name }}</td>
-                    <td>{{ $reg->user->email }}</td>
-                    <td>{{ $reg->user->school_name ?? '-' }}</td>
-                    <td style="text-align: center;">{{ $reg->user->specialization ?? '-' }}</td>
+                    <td style="text-align: center;">
+                        {{ $reg->attendance ? \Carbon\Carbon::parse($reg->attendance->scan_time)->format('H:i:s') : '-' }}
+                    </td>
                     <td style="text-align: center;">
                         @if($reg->status === \App\Enums\RegistrationStatus::CHECKED_IN)
                             <span class="badge badge-success">حاضر / Present</span>
@@ -278,9 +281,11 @@
                             <span class="badge badge-danger">غائب / Absent</span>
                         @endif
                     </td>
-                    <td style="text-align: center;">
-                        {{ $reg->attendance ? \Carbon\Carbon::parse($reg->attendance->scan_time)->format('H:i:s') : '-' }}
-                    </td>
+                    <td style="text-align: center;">{{ $reg->user->specialization ?? '-' }}</td>
+                    <td>{{ $reg->user->school_name ?? '-' }}</td>
+                    <td>{{ $reg->user->email }}</td>
+                    <td style="font-weight: bold; text-align: right;">{{ $reg->user->name }}</td>
+                    <td style="text-align: center;">{{ $index++ }}</td>
                 </tr>
             @empty
                 <tr>
