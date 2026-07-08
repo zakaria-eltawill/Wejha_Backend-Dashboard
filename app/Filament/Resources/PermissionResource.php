@@ -30,10 +30,12 @@ class PermissionResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label('اسم الصلاحية / Permission Name')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('guard_name')
+                            ->label('الحارس / Guard')
                             ->required()
                             ->default('web')
                             ->maxLength(255),
@@ -46,9 +48,11 @@ class PermissionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('اسم الصلاحية / Permission Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('guard_name')
+                    ->label('الحارس / Guard')
                     ->searchable(),
             ])
             ->actions([

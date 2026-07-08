@@ -31,18 +31,23 @@ class NotificationResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('title_ar')
+                            ->label('العنوان (بالعربية) / Title (Arabic)')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('title_en')
+                            ->label('العنوان (بالإنجليزية) / Title (English)')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('content_ar')
+                            ->label('المحتوى (بالعربية) / Content (Arabic)')
                             ->required()
                             ->rows(3),
                         Forms\Components\Textarea::make('content_en')
+                            ->label('المحتوى (بالإنجليزية) / Content (English)')
                             ->required()
                             ->rows(3),
                         Forms\Components\Select::make('recipient_type')
+                            ->label('نوع المستلمين / Recipient Group')
                             ->options([
                                 'all' => 'الكل / All Active Users',
                                 'individual' => 'مستخدم محدد / Specific User',
@@ -53,21 +58,26 @@ class NotificationResource extends Resource
                             ->required()
                             ->default('all'),
                         Forms\Components\Select::make('user_id')
+                            ->label('المستخدم المستهدف / Target User')
                             ->relationship('user', 'name')
                             ->searchable()
                             ->visible(fn (callable $get) => $get('recipient_type') === 'individual')
                             ->required(fn (callable $get) => $get('recipient_type') === 'individual'),
                         Forms\Components\Select::make('role_id')
+                            ->label('المجموعة المستهدفة / Target Role')
                             ->relationship('role', 'name')
                             ->visible(fn (callable $get) => $get('recipient_type') === 'role')
                             ->required(fn (callable $get) => $get('recipient_type') === 'role'),
                         Forms\Components\Select::make('event_id')
+                            ->label('الفعالية المستهدفة / Target Event')
                             ->relationship('event', 'title_ar')
                             ->visible(fn (callable $get) => $get('recipient_type') === 'event')
                             ->required(fn (callable $get) => $get('recipient_type') === 'event'),
                         Forms\Components\DateTimePicker::make('scheduled_at')
+                            ->label('وقت الجدولة / Scheduled At')
                             ->placeholder('اتركه فارغاً للإرسال الفوري'),
                         Forms\Components\Select::make('status')
+                            ->label('الحالة / Status')
                             ->options([
                                 'draft' => 'مسودة / Draft',
                                 'scheduled' => 'مجدول / Scheduled',
@@ -87,12 +97,15 @@ class NotificationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title_ar')
+                    ->label('عنوان الإشعار / Title')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('recipient_type')
+                    ->label('نوع المستلمين / Recipient Group')
                     ->badge()
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('الحالة / Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -103,9 +116,11 @@ class NotificationResource extends Resource
                         default => 'primary',
                     }),
                 Tables\Columns\TextColumn::make('scheduled_at')
+                    ->label('مجدول في / Scheduled At')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('delivered_at')
+                    ->label('تم الإرسال في / Sent At')
                     ->dateTime()
                     ->sortable(),
             ])

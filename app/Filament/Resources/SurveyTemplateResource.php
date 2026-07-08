@@ -32,16 +32,20 @@ class SurveyTemplateResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name_ar')
+                            ->label('اسم النموذج بالعربية / Name (Arabic)')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('name_en')
+                            ->label('اسم النموذج بالإنجليزية / Name (English)')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('version')
+                            ->label('الإصدار / Version')
                             ->default('1.0')
                             ->required()
                             ->maxLength(50),
                         Forms\Components\Select::make('status')
+                            ->label('الحالة / Status')
                             ->options([
                                 'draft' => 'مسودة / Draft',
                                 'active' => 'نشط / Active',
@@ -50,27 +54,35 @@ class SurveyTemplateResource extends Resource
                             ->required()
                             ->default('draft'),
                         Forms\Components\TextInput::make('category')
+                            ->label('التصنيف / Category')
                             ->maxLength(255),
                         Forms\Components\Toggle::make('is_reusable')
+                            ->label('قابل لإعادة الاستخدام / Reusable')
                             ->default(true),
                         Forms\Components\Textarea::make('description_ar')
+                            ->label('الوصف بالعربية / Description (Arabic)')
                             ->rows(2),
                         Forms\Components\Textarea::make('description_en')
+                            ->label('الوصف بالإنجليزية / Description (English)')
                             ->rows(2),
                     ])->columns(2),
 
                 Forms\Components\Section::make('أسئلة الاستبيان / Survey Questions')
                     ->schema([
                         Forms\Components\Repeater::make('questions')
+                            ->label('الأسئلة / Questions')
                             ->relationship('questions')
                             ->schema([
                                 Forms\Components\TextInput::make('question_text_ar')
+                                    ->label('نص السؤال بالعربية / Question Text (Arabic)')
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('question_text_en')
+                                    ->label('نص السؤال بالإنجليزية / Question Text (English)')
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\Select::make('type')
+                                    ->label('نوع السؤال / Question Type')
                                     ->options(collect(QuestionType::cases())->mapWithKeys(fn ($q) => [$q->value => $q->labelAr()]))
                                     ->reactive()
                                     ->required(),
@@ -80,11 +92,14 @@ class SurveyTemplateResource extends Resource
                                     ->valueLabel('القيمة / Label')
                                     ->visible(fn (callable $get) => in_array($get('type'), ['multiple_choice', 'checkbox', 'rating'])),
                                 Forms\Components\Toggle::make('is_required')
+                                    ->label('إجباري / Required')
                                     ->default(true),
                                 Forms\Components\TextInput::make('score')
+                                    ->label('الدرجة / Score')
                                     ->numeric()
                                     ->default(0),
                                 Forms\Components\TextInput::make('sort_order')
+                                    ->label('ترتيب السؤال / Order')
                                     ->numeric()
                                     ->default(0),
                             ])
@@ -101,11 +116,14 @@ class SurveyTemplateResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name_ar')
+                    ->label('اسم الاستبيان / Survey Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('version')
+                    ->label('الإصدار / Version')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('الحالة / Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -113,7 +131,8 @@ class SurveyTemplateResource extends Resource
                         'archived' => 'danger',
                         default => 'primary',
                     }),
-                Tables\Columns\ToggleColumn::make('is_reusable'),
+                Tables\Columns\ToggleColumn::make('is_reusable')
+                    ->label('قابل لإعادة الاستخدام / Reusable'),
                 Tables\Columns\TextColumn::make('questions_count')
                     ->counts('questions')
                     ->label('عدد الأسئلة'),

@@ -30,16 +30,22 @@ class AuditLogResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('user.name')
+                            ->label('اسم المستخدم / User Name')
                             ->disabled(),
                         Forms\Components\TextInput::make('action')
+                            ->label('العملية / Action')
                             ->disabled(),
                         Forms\Components\TextInput::make('entity')
+                            ->label('الكيان / Entity')
                             ->disabled(),
                         Forms\Components\TextInput::make('entity_id')
+                            ->label('معرّف الكيان / Entity ID')
                             ->disabled(),
                         Forms\Components\TextInput::make('ip_address')
+                            ->label('عنوان IP / IP Address')
                             ->disabled(),
                         Forms\Components\TextInput::make('user_agent')
+                            ->label('متصفح المستخدم / User Agent')
                             ->disabled(),
                         Forms\Components\KeyValue::make('old_values')
                             ->label('القيم السابقة / Old Values')
@@ -48,6 +54,7 @@ class AuditLogResource extends Resource
                             ->label('القيم الجديدة / New Values')
                             ->disabled(),
                         Forms\Components\DateTimePicker::make('created_at')
+                            ->label('تاريخ العملية / Timestamp')
                             ->disabled(),
                     ])->columns(2)
             ]);

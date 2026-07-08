@@ -31,39 +31,46 @@ class UserResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label('الاسم بالكامل / Full Name')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('email')
+                            ->label('البريد الإلكتروني / Email')
                             ->email()
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('password')
+                            ->label('كلمة المرور / Password')
                             ->password()
                             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $context): bool => $context === 'create')
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone_number')
+                            ->label('رقم الجوال / Phone')
                             ->tel()
                             ->maxLength(255),
                         Forms\Components\Select::make('gender')
+                            ->label('الجنس / Gender')
                             ->options([
                                 'male' => 'ذكر / Male',
                                 'female' => 'أنثى / Female',
                             ]),
                         Forms\Components\TextInput::make('academic_year')
+                            ->label('السنة الدراسية / Year')
                             ->maxLength(255),
                         Forms\Components\TextInput::make('school_name')
-                            ->maxLength(255)
-                            ->label('المدرسة / School'),
+                            ->label('المدرسة / School')
+                            ->maxLength(255),
                         Forms\Components\Select::make('specialization')
+                            ->label('التخصص / Specialization')
                             ->options([
                                 'علمي' => 'علمي / Scientific',
                                 'أدبي' => 'أدبي / Literary',
-                            ])
-                            ->label('التخصص / Specialization'),
+                            ]),
                         Forms\Components\Select::make('status')
+                            ->label('الحالة / Status')
                             ->options([
                                 'active' => 'نشط / Active',
                                 'inactive' => 'غير نشط / Inactive',
@@ -72,12 +79,14 @@ class UserResource extends Resource
                             ->required()
                             ->default('active'),
                         Forms\Components\Select::make('preferred_language')
+                            ->label('اللغة المفضلة / Language')
                             ->options([
                                 'ar' => 'العربية / Arabic',
                                 'en' => 'الإنجليزية / English',
                              ])
                             ->default('ar'),
                         Forms\Components\Select::make('preferred_theme')
+                            ->label('المظهر / Theme')
                             ->options([
                                 'light' => 'فاتح / Light',
                                 'dark' => 'داكن / Dark',
@@ -85,10 +94,12 @@ class UserResource extends Resource
                             ])
                             ->default('system'),
                         Forms\Components\Select::make('roles')
+                            ->label('الأدوار / Roles')
                             ->multiple()
                             ->relationship('roles', 'name')
                             ->preload(),
                         Forms\Components\FileUpload::make('avatar')
+                            ->label('الصورة الشخصية / Avatar')
                             ->image()
                             ->directory('avatars'),
                     ])->columns(2)
@@ -100,16 +111,21 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
+                    ->label('الصورة / Avatar')
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('الاسم / Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('البريد الإلكتروني / Email')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone_number')
+                    ->label('رقم الجوال / Phone')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('school_name')
+                    ->label('المدرسة / School')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('specialization')
@@ -117,6 +133,7 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('الحالة / Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'active' => 'success',
@@ -125,9 +142,11 @@ class UserResource extends Resource
                         default => 'primary',
                     }),
                 Tables\Columns\TextColumn::make('roles.name')
+                    ->label('الدور / Role')
                     ->badge()
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('تاريخ الإنشاء / Created')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

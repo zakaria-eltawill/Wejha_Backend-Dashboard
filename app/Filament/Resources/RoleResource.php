@@ -30,14 +30,17 @@ class RoleResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label('اسم الدور / Role Name')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('guard_name')
+                            ->label('الحارس / Guard')
                             ->required()
                             ->default('web')
                             ->maxLength(255),
                         Forms\Components\Select::make('permissions')
+                            ->label('الصلاحيات الممنوحة / Permissions')
                             ->multiple()
                             ->relationship('permissions', 'name')
                             ->preload(),
@@ -50,11 +53,14 @@ class RoleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('اسم الدور / Role Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('guard_name')
+                    ->label('الحارس / Guard')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('permissions.name')
+                    ->label('الصلاحيات / Permissions')
                     ->badge()
                     ->color('warning')
                     ->limitList(5),
