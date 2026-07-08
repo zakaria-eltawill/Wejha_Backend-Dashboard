@@ -9,8 +9,8 @@ Route::get('/', function () {
 // Public Student API Endpoints
 Route::post('/api/students/register', [\App\Http\Controllers\Api\StudentAuthController::class, 'register']);
 Route::post('/api/students/login', [\App\Http\Controllers\Api\StudentAuthController::class, 'login']);
-Route::get('/api/events', [\App\Http\Controllers\Api\EventApiController::class, 'index']);
-Route::get('/api/events/{id}', [\App\Http\Controllers\Api\EventApiController::class, 'show']);
+Route::get('/api/events', [\App\Http\Controllers\Api\EventApiController::class, 'index'])->name('api.events.index');
+Route::get('/api/events/{id}', [\App\Http\Controllers\Api\EventApiController::class, 'show'])->name('api.events.show');
 
 // Authenticated API Endpoints (Supports both Client Portal Bearer Token and Filament Dashboard Session)
 Route::middleware(['api.token'])->group(function () {

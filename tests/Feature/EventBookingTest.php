@@ -90,4 +90,50 @@ class EventBookingTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonPath('success', false);
     }
+
+    public function test_auto_archives_past_events(): void
+    {
+        // Create an event in the past
+        $pastEvent = Event::create([
+            'title_ar' => 'فعالية سابقة',
+            'title_en' => 'Past Event',
+            'type' => 'seminar',
+            'event_date' => now()->subDays(1)->format('Y-m-d'),
+            'event_time' => '10:00',
+            'venue' => 'قاعة ب',
+            'capacity' => 10,
+            'status' => 'published',
+            'creator_id' => $this->user->id,
+        ]);
+
+        $this->artisan('app:archive-past-events');
+
+        $pastEvent->refresh();
+        $this->assertEquals(\App\Enums\EventStatus::ARCHIVED, $pastEvent->status);
+    }
+
+    public function test_api_excludes_past_events(): void
+    {
+        // Create an event in the past
+        Event::create([
+            'title_ar' => 'فعالية سابقة',
+            'title_en' => 'Past Event',
+            'type' => 'seminar',
+            'event_date' => now()->subDays(1)->format('Y-m-d'),
+            'event_time' => '10:00',
+            'venue' => 'قاعة ب',
+            'capacity' => 10,
+            'status' => 'published',
+            'creator_id' => $this->user->id,
+        ]);
+
+        $response = $this->getJson(route('api.events.index'));
+
+        $response->assertStatus(200);
+        $events = $response->json('events');
+        
+        // Assert only the future event ($this->event) is returned, and the past one is excluded
+        $this->assertCount(1, $events);
+        $this->assertEquals($this->event->id, $events[0]['id']);
+    }
 }

@@ -12,7 +12,18 @@ class EventApiController extends Controller
 {
     public function index(): JsonResponse
     {
+        $now = \Carbon\Carbon::now('Asia/Riyadh');
+        $todayDate = $now->toDateString();
+        $currentTime = $now->toTimeString();
+
         $events = Event::where('status', 'published')
+            ->where(function ($query) use ($todayDate, $currentTime) {
+                $query->where('event_date', '>', $todayDate)
+                    ->orWhere(function ($q) use ($todayDate, $currentTime) {
+                        $q->where('event_date', $todayDate)
+                            ->where('event_time', '>=', $currentTime);
+                    });
+            })
             ->orderBy('event_date', 'asc')
             ->get();
 
