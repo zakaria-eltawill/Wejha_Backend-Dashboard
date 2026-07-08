@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use App\Filament\Clusters\SurveyManagement;
 use App\Models\SurveyTemplate;
 use App\Enums\QuestionType;
 use App\Services\SurveyTemplateService;
@@ -17,12 +16,12 @@ use Filament\Tables\Table;
 class SurveyTemplateResource extends Resource
 {
     protected static ?string $model = SurveyTemplate::class;
-    protected static ?string $cluster = SurveyManagement::class;
-    protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static ?string $navigationIcon = 'heroicon-o-document-chart-bar';
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationLabel(): string
     {
-        return 'نماذج الاستبيانات / Templates';
+        return 'إدارة الاستبيانات / Surveys';
     }
 
     public static function form(Form $form): Form
