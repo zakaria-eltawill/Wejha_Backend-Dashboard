@@ -9,9 +9,10 @@ use Filament\Clusters\Cluster;
 class Communications extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
+    protected static ?int $navigationSort = 5;
     
     public static function getNavigationLabel(): string
     {
-        return 'الاتصالات والإشعارات / Communications';
+        return 'الإشعارات والاتصالات / Notifications';
     }
 }
