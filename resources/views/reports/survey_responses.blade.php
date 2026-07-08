@@ -53,7 +53,7 @@
         }
 
         .logo {
-            height: 50px;
+            height: 75px;
         }
 
         .meta-table {
