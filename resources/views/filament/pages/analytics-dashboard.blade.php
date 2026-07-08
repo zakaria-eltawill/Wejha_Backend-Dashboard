@@ -43,7 +43,7 @@
                     <label class="block text-xs font-semibold text-gray-500 mb-1">اختر التقييم / Select Evaluation</label>
                     <select wire:model="evaluation_id" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2 text-sm text-gray-700 dark:text-gray-300">
                         <option value="">-- اختر التقييم --</option>
-                        @foreach(\App\Models\EventEvaluation::with(['event', 'template'])->all() as $eval)
+                        @foreach(\App\Models\EventEvaluation::with(['event', 'template'])->get() as $eval)
                             <option value="{{ $eval->id }}">
                                 {{ $eval->event->title_ar }} - {{ $eval->evaluation_type->labelAr() }} ({{ $eval->template->name_ar }})
                             </option>
