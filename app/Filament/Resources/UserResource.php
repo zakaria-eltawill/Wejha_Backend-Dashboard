@@ -39,6 +39,11 @@ class UserResource extends Resource
                             ->label('الاسم بالكامل / Full Name')
                             ->required()
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('username')
+                            ->label('اسم المستخدم / Username')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
                         Forms\Components\TextInput::make('email')
                             ->label('البريد الإلكتروني / Email')
                             ->email()
@@ -120,6 +125,10 @@ class UserResource extends Resource
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('الاسم / Name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('username')
+                    ->label('اسم المستخدم / Username')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')

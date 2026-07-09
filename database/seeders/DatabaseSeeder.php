@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@wejha.com'],
             [
                 'name' => 'مدير النظام / Administrator',
+                'username' => 'admin',
                 'password' => \Illuminate\Support\Facades\Hash::make('password'),
                 'status' => 'active',
                 'preferred_language' => 'ar',
@@ -33,6 +34,10 @@ class DatabaseSeeder extends Seeder
                 'timezone' => config('app.timezone', 'Africa/Tripoli'),
             ]
         );
+
+        if (empty($admin->username)) {
+            $admin->update(['username' => 'admin']);
+        }
 
         // 3. Assign Role
         $admin->assignRole($superAdminRole);
