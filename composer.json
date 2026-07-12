@@ -11,6 +11,7 @@
         "filament/filament": "^3.2",
         "inertiajs/inertia-laravel": "^2.0",
         "khaled.alshamaa/ar-php": "^7.0",
+        "kreait/laravel-firebase": "^6.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "maatwebsite/excel": "^3.1",

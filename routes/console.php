@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 
 \Illuminate\Support\Facades\Schedule::command('app:archive-past-events')->everyMinute();
 \Illuminate\Support\Facades\Schedule::command('app:send-scheduled-notifications')->everyMinute();
+\Illuminate\Support\Facades\Schedule::command('app:send-event-reminders')->dailyAt('10:00');

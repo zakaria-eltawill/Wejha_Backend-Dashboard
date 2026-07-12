@@ -82,6 +82,9 @@ class RegistrationService
 
             \Illuminate\Support\Facades\Cache::forget('dashboard_stats');
 
+            $registration->load(['user', 'event']);
+            \Illuminate\Support\Facades\Mail::to($registration->user->email)->send(new \App\Mail\EventRegistrationEmail($registration));
+
             return $registration;
         });
     }

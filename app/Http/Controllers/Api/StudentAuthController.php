@@ -86,9 +86,17 @@ class StudentAuthController extends Controller
             ], 403);
         }
 
+        $isFirstLogin = is_null($user->last_login_at);
+
+        $updates = ['last_login_at' => now()];
         // Generate new API token on login if not exists
         if (!$user->api_token) {
-            $user->update(['api_token' => Str::random(60)]);
+            $updates['api_token'] = Str::random(60);
+        }
+        $user->update($updates);
+
+        if ($isFirstLogin) {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\WelcomeEmail($user));
         }
 
         return response()->json([
@@ -101,5 +109,86 @@ class StudentAuthController extends Controller
                 'api_token' => $user->api_token,
             ]
         ]);
+    }
+
+    public function googleLogin(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id_token' => 'required|string',
+        ]);
+
+        try {
+            $auth = app('firebase.auth');
+            $verifiedIdToken = $auth->verifyIdToken($validated['id_token']);
+            
+            $email = $verifiedIdToken->claims()->get('email');
+            $name = $verifiedIdToken->claims()->get('name') ?? 'مستخدم جوجل';
+            $picture = $verifiedIdToken->claims()->get('picture');
+
+            if (!$email) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'تعذر الحصول على البريد الإلكتروني من حساب جوجل / Cannot retrieve email from Google.'
+                ], 400);
+            }
+
+            $user = User::where('email', $email)->first();
+            $isFirstLogin = false;
+
+            if (!$user) {
+                $apiToken = Str::random(60);
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => Hash::make(Str::random(24)),
+                    'api_token' => $apiToken,
+                    'avatar' => $picture,
+                    'status' => 'active',
+                    'preferred_language' => 'ar',
+                    'preferred_theme' => 'light',
+                    'timezone' => config('app.timezone', 'Africa/Tripoli'),
+                    'last_login_at' => now(),
+                ]);
+
+                try {
+                    $user->assignRole('Student');
+                } catch (\Throwable $e) {}
+
+                $isFirstLogin = true;
+            } else {
+                $isFirstLogin = is_null($user->last_login_at);
+                $updates = ['last_login_at' => now()];
+                if ($picture && !$user->avatar) {
+                    $updates['avatar'] = $picture;
+                }
+                if (!$user->api_token) {
+                    $updates['api_token'] = Str::random(60);
+                }
+                $user->update($updates);
+            }
+
+            if ($isFirstLogin) {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\WelcomeEmail($user));
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تسجيل الدخول بنجاح / Logged in successfully.',
+                'student' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'api_token' => $user->api_token,
+                    'avatar' => $user->avatar,
+                ]
+            ]);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'رمز المصادقة غير صالح / Invalid authentication token.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 401);
+        }
     }
 }
