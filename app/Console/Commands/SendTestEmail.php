@@ -26,13 +26,9 @@ class SendTestEmail extends Command
 
         $this->info("Sending Welcome Email to: {$email}...");
 
-        // Render the blade view manually and send as HTML to bypass ShouldQueue serialization
-        $html = view('emails.student_welcome', ['user' => $user])->render();
-
-        Mail::html($html, function ($message) use ($email) {
-            $message->to($email)
-                ->subject('مرحباً بك في منصة وجهة!');
-        });
+        // sendNow() bypasses the queue (WelcomeEmail implements ShouldQueue) while still
+        // rendering through the real Mailable pipeline, so $message->embed() works for inline images.
+        Mail::to($email)->sendNow(new WelcomeEmail($user));
 
         $this->info('Email sent successfully! Check your inbox.');
     }

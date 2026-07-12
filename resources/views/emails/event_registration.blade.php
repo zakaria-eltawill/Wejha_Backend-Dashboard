@@ -6,7 +6,7 @@
     <h2>أهلاً {{ $user->name }}،</h2>
     <p>تم تأكيد تسجيلك في الفعالية بنجاح!</p>
     
-    <div style="background-color: #f5f7fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+    <div class="info-box">
         <h3 style="margin-top: 0;">تفاصيل الفعالية:</h3>
         <p><strong>الاسم:</strong> {{ $event->title_ar }}</p>
         <p><strong>التاريخ:</strong> {{ $event->event_date?->format('Y-m-d') }}</p>

@@ -1,0 +1,344 @@
+{
+	"info": {
+		"_postman_id": "c1a2b3d4-5e6f-4a7b-8c9d-wejha-coll-0001",
+		"name": "Wejha Student API",
+		"description": "Complete collection of every /api endpoint exposed to the Wejha student mobile/web app (Laravel backend). All API routes live in routes/web.php under /api/*, authenticated via a custom Bearer token (not Sanctum) issued at register/login/google-login and validated by ApiTokenMiddleware (alias `api.token`).\n\n**Auth flow**: call Register or Login (or Google Login) first — the response's `student.api_token` is auto-saved to the `api_token` environment variable by a test script. All protected requests below use `Authorization: Bearer {{api_token}}`.\n\n**Response envelope**: every endpoint returns `{ \"success\": boolean, \"message\": \"...\", ...data }`. Error responses are `{ \"success\": false, \"message\": \"...\" }` with a matching HTTP status code.\n\n**Note**: CSRF protection is excluded for `api/*` in `bootstrap/app.php` (`validateCsrfTokens(except: ['api/*'])`) so these routes are safe to call directly, unlike other POST routes in routes/web.php.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "0"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"طالب تجريبي\",\n    \"email\": \"{{student_email}}\",\n    \"password\": \"{{student_password}}\",\n    \"phone_number\": \"0912345678\",\n    \"gender\": \"male\",\n    \"academic_year\": \"السنة الثالثة\",\n    \"school_name\": \"جامعة بنغازي\",\n    \"specialization\": \"scientific\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "students", "register"]
+						},
+						"description": "Create a new student account.\n\nValidation:\n- name: required|string|max:255\n- email: required|email|max:255|unique:users\n- password: required|string|min:6\n- phone_number: nullable|string|max:20\n- gender: nullable|in:male,female\n- academic_year: nullable|string|max:50\n- school_name: nullable|string|max:255\n- specialization: nullable|in:scientific,literary,علمي,أدبي\n\nOn success (201) the user is auto-assigned the `Student` role, given `api_token`, `status=active`. Response: `{ success, message, student: { id, name, email, api_token } }`."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const json = pm.response.json();",
+									"    if (json.student && json.student.api_token) {",
+									"        pm.environment.set('api_token', json.student.api_token);",
+									"        pm.test('api_token saved to environment', () => true);",
+									"    }",
+									"}",
+									"pm.test('status is 201 or 422 (email may already exist)', () => {",
+									"    pm.expect([201, 422]).to.include(pm.response.code);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{student_email}}\",\n    \"password\": \"{{student_password}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "students", "login"]
+						},
+						"description": "Log in with email + password.\n\nValidation:\n- email: required|email\n- password: required|string\n\nResponses:\n- 200 success: `{ success, message, student: { id, name, email, api_token } }`\n- 401: invalid credentials\n- 403: account not active\n\nSends a WelcomeEmail on the user's very first login (when `last_login_at` was previously null)."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const json = pm.response.json();",
+									"    if (json.student && json.student.api_token) {",
+									"        pm.environment.set('api_token', json.student.api_token);",
+									"    }",
+									"}",
+									"pm.test('status is 200', () => pm.response.code === 200);"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Google Login",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id_token\": \"{{google_id_token}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students/google-login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "students", "google-login"]
+						},
+						"description": "Log in / auto-register via Firebase Google Sign-In.\n\nValidation:\n- id_token: required|string (Firebase ID token obtained client-side from Google Sign-In)\n\nBackend verifies the token via `firebase.auth`, extracts email/name/picture. Creates the user (assigns `Student` role) if new, otherwise updates `last_login_at`/`avatar`.\n\nResponses:\n- 200: `{ success, message, student: { id, name, email, api_token, avatar } }`\n- 400: could not extract email from Google token\n- 401: invalid/expired Firebase id_token\n\nSet `google_id_token` in the environment to a real Firebase ID token before running (obtained from the mobile app's Google Sign-In flow — cannot be generated from Postman)."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const json = pm.response.json();",
+									"    if (json.student && json.student.api_token) {",
+									"        pm.environment.set('api_token', json.student.api_token);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					]
+				}
+			],
+			"description": "Public endpoints (no Bearer token needed) for student account creation and login. All return `student.api_token` which the test scripts save to the `api_token` environment variable for use by the protected requests below."
+		},
+		{
+			"name": "Events (Public)",
+			"item": [
+				{
+					"name": "List Events",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": {
+							"raw": "{{base_url}}/api/events",
+							"host": ["{{base_url}}"],
+							"path": ["api", "events"]
+						},
+						"description": "List all published, upcoming events (status=published, event_date/time in the future), ordered by event_date ascending.\n\nResponse 200: `{ success, events: [{ id, title_ar, title_en, description_ar, description_en, type (seminar|workshop|exhibition), speaker, event_date, event_time, venue, capacity, banner_image_url, cover_image_url }] }`"
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 200', () => pm.response.code === 200);",
+									"const json = pm.response.json();",
+									"if (json.success && json.events && json.events.length > 0) {",
+									"    pm.environment.set('event_id', json.events[0].id);",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Event by ID",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": {
+							"raw": "{{base_url}}/api/events/{{event_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "events", "{{event_id}}"]
+						},
+						"description": "Get a single event's details by its UUID.\n\nResponse 200: `{ success, event: { id, title_ar, title_en, description_ar, description_en, type, speaker, event_date, event_time, venue, capacity, banner_image_url, cover_image_url } }`\nResponse 404: `{ success: false, message: \"الفعالية غير موجودة / Event not found.\" }`"
+					}
+				}
+			],
+			"description": "Public event browsing endpoints — no authentication required."
+		},
+		{
+			"name": "Event Booking",
+			"item": [
+				{
+					"name": "Register for Event",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": \"{{event_id}}\",\n    \"source\": \"mobile\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/events/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "events", "register"]
+						},
+						"description": "Register the authenticated student for an event.\n\nValidation (RegisterForEventRequest):\n- event_id: required|uuid|exists:events,id\n- source: string|in:web,mobile,admin (optional, defaults to \"web\")\n\nBusiness rules (RegistrationService):\n- 400 if event not found\n- 422 if event is fully booked (EventCapacityExceededException)\n- 400 if registration_opens_at is in the future / registration_closes_at has passed\n- 422 if user already registered for this event (DuplicateRegistrationException)\n\nOn success (201): status is `pending` if the event `requires_approval`, otherwise `approved`; a unique `qr_hash` is generated (used later for attendance scan) and an EventRegistrationEmail is sent.\n\nResponse 201: `{ success, message, registration: { id, status, qr_hash } }`"
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const json = pm.response.json();",
+									"    if (json.registration) {",
+									"        pm.environment.set('registration_id', json.registration.id);",
+									"        pm.environment.set('qr_hash', json.registration.qr_hash);",
+									"    }",
+									"}",
+									"pm.test('status is 201, 400 or 422', () => {",
+									"    pm.expect([201, 400, 422]).to.include(pm.response.code);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Cancel Registration",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": {
+							"raw": "{{base_url}}/api/events/cancel/{{registration_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "events", "cancel", "{{registration_id}}"]
+						},
+						"description": "Cancel a registration by its ID (path param, UUID string — not format-validated by the route).\n\nSets the registration's status to `cancelled` (no server-side guard against cancelling an already checked-in registration).\n\nResponse 200: `{ success: true, message: \"تم إلغاء التسجيل بنجاح.\" }`\nResponse 400: `{ success: false, message: \"تعذر إلغاء التسجيل.\" }` (registration not found) or the raw exception message."
+					}
+				}
+			],
+			"description": "Requires `Authorization: Bearer {{api_token}}`. Lets a logged-in student register for / cancel a registration to an event."
+		},
+		{
+			"name": "Attendance",
+			"item": [
+				{
+					"name": "Scan QR (Check-in)",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"qr_hash\": \"{{qr_hash}}\",\n    \"device\": \"Mobile Scanner App\",\n    \"event_id\": \"{{event_id}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/attendance/scan",
+							"host": ["{{base_url}}"],
+							"path": ["api", "attendance", "scan"]
+						},
+						"description": "Record attendance check-in by scanning a registration's QR ticket hash. Typically called by a staff/organizer's scanner client (still uses the same `api.token` auth as students — the authenticated user is recorded as the scanner).\n\nValidation (ScanAttendanceRequest):\n- qr_hash: required|string|max:255\n- device: nullable|string|max:255 (defaults to \"Web Camera\")\n- event_id: nullable|string|exists:events,id (if provided, must match the ticket's actual event)\n\nBusiness rules (AttendanceService):\n- 400 if qr_hash doesn't match any registration (InvalidQRCodeException)\n- 400 if event_id provided but doesn't match the ticket's event\n- 422 if already checked in (DuplicateRegistrationException) — message includes previous check-in time/operator\n- 400 if registration status isn't `approved` yet\n\nOn success: registration status becomes `checked_in`, an Attendance row is created.\n\nResponse 200: `{ success, message, attendee: { name, email, school, time } }`"
+					}
+				}
+			],
+			"description": "Requires `Authorization: Bearer {{api_token}}`. Used to check students in at an event via their registration QR code."
+		},
+		{
+			"name": "Surveys",
+			"item": [
+				{
+					"name": "Submit Survey Answers",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"answers\": [\n        {\n            \"question_id\": \"{{question_id}}\",\n            \"response_text\": \"إجابة نصية تجريبية\"\n        },\n        {\n            \"question_id\": \"{{question_id}}\",\n            \"response_json\": [\"option_1\", \"option_2\"]\n        }\n    ]\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/surveys/submit/{{evaluation_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "surveys", "submit", "{{evaluation_id}}"]
+						},
+						"description": "Submit answers to a survey (pre- or post-event evaluation). `{{evaluation_id}}` is the `event_evaluations.id` (path param), not the event id or survey_template id.\n\nValidation (SubmitSurveyRequest):\n- answers: required|array|min:1\n- answers.*.question_id: required|uuid|exists:survey_questions,id\n- answers.*.response_text: nullable|string (use for text/textarea/number/date/email/phone/rating questions)\n- answers.*.response_json: nullable|array (use for multiple_choice/checkbox questions)\n\nBusiness rules (SurveyResponseService):\n- 400 if evaluation not found\n- 403 if the evaluation/survey template is not active (SurveyClosedException)\n- 400 if the user isn't registered for the event\n- 400 if evaluation_type is \"post\" and the user hasn't checked in (attended) yet\n- 400 if a question doesn't belong to this survey template, or a required question is left empty\n- One SurveyResponse row is created per answer; re-submitting the same question for the same evaluation will fail on a DB unique constraint (user_id, event_evaluation_id, question_id)\n\nResponse 201: `{ success, message, response_count }`"
+					}
+				}
+			],
+			"description": "Requires `Authorization: Bearer {{api_token}}`. Submits a student's answers to a pre- or post-event survey/evaluation."
+		},
+		{
+			"name": "Email",
+			"item": [
+				{
+					"name": "Send Email",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recipient\": \"someone@example.com\",\n    \"subject\": \"موضوع تجريبي\",\n    \"body\": \"<p>محتوى الرسالة بصيغة HTML.</p>\",\n    \"extra_data\": {}\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/emails/send",
+							"host": ["{{base_url}}"],
+							"path": ["api", "emails", "send"]
+						},
+						"description": "Send an arbitrary generic email (used for custom notifications from the app). Requires a valid `api_token`, same as any other authenticated student — there is no extra role/permission check on this route, so any logged-in student can trigger emails to any recipient. Flag this with the backend team if that's not intended.\n\nValidation (SendEmailRequest):\n- recipient: required|email|max:255\n- subject: required|string|max:255\n- body: required|string (rendered as raw HTML inside the branded GenericMail template)\n- extra_data: nullable|array (currently unused by the template, reserved for future use)\n\nResponse 200: `{ success: true, message: \"تم إرسال البريد الإلكتروني بنجاح.\" }`\nResponse 500: `{ success: false, message: \"فشل إرسال البريد الإلكتروني. يرجى المحاولة لاحقاً.\" }`"
+					}
+				}
+			],
+			"description": "Requires `Authorization: Bearer {{api_token}}`. Generic transactional email sender."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": { "type": "text/javascript", "exec": [""] }
+		},
+		{
+			"listen": "test",
+			"script": { "type": "text/javascript", "exec": [""] }
+		}
+	],
+	"variable": [
+		{ "key": "base_url", "value": "http://localhost:8000" }
+	]
+}
