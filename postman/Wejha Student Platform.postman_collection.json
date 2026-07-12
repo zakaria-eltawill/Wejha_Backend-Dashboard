@@ -1,0 +1,393 @@
+{
+	"info": {
+		"_postman_id": "e5f2c3b4-7f8a-4b9c-0d1e-wejha-coll-0002",
+		"name": "Wejha Student Platform API",
+		"description": "Complete collection of every API endpoint used specifically by the Wejha **student** mobile/web app. Excludes organizer/admin-only endpoints (QR attendance scanning, generic email sender) which belong to a separate staff-facing tool.\n\nAll routes live in `routes/web.php` under `/api/*`. Auth is a custom Bearer token (not Sanctum) issued at register/login/google-login/reset-password and validated by `ApiTokenMiddleware`.\n\n**Auth flow**: call Register, Login, or Google Login first. The response's `student.api_token` is auto-saved to the `api_token` environment variable by a test script on each request. All protected requests use `Authorization: Bearer {{api_token}}`.\n\n**Response envelope**: every endpoint returns `{ \"success\": boolean, \"message\": \"...\", ...data }`.\n\n**Suggested end-to-end run order**: Register → Login → Get Profile → Update Profile → List Events → Get Event → Get Event Evaluations → Register for Event → List My Registrations → Get My Ticket → Get Survey Questions → Submit Survey Answers → Cancel Registration → List Notifications → Mark Notification Read → Change Password → Logout.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "0"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"طالب تجريبي\",\n    \"email\": \"{{student_email}}\",\n    \"password\": \"{{student_password}}\",\n    \"phone_number\": \"0912345678\",\n    \"gender\": \"male\",\n    \"academic_year\": \"السنة الثالثة\",\n    \"school_name\": \"جامعة بنغازي\",\n    \"specialization\": \"scientific\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/students/register", "host": ["{{base_url}}"], "path": ["api", "students", "register"] },
+						"description": "Create a new student account.\n\nValidation:\n- name: required|string|max:255\n- email: required|email|max:255|unique:users\n- password: required|string|min:6\n- phone_number, gender(male|female), academic_year, school_name, specialization(scientific|literary|علمي|أدبي): all nullable\n\nResponse 201: `{ success, message, student: { id, name, email, api_token } }`. Auto-assigns the `Student` role and sets `status=active`."
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"if (pm.response.code === 201) {",
+						"    const json = pm.response.json();",
+						"    if (json.student && json.student.api_token) pm.environment.set('api_token', json.student.api_token);",
+						"}",
+						"pm.test('status is 201 or 422 (email may already exist)', () => pm.expect([201, 422]).to.include(pm.response.code));"
+					] } }]
+				},
+				{
+					"name": "Login",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{student_email}}\",\n    \"password\": \"{{student_password}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/students/login", "host": ["{{base_url}}"], "path": ["api", "students", "login"] },
+						"description": "Log in with email + password.\n\nValidation: email required|email, password required|string.\n\nResponses: 200 success `{ success, message, student: { id, name, email, api_token } }`; 401 invalid credentials; 403 account inactive.\n\nSends a WelcomeEmail on the user's very first login."
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"if (pm.response.code === 200) {",
+						"    const json = pm.response.json();",
+						"    if (json.student && json.student.api_token) pm.environment.set('api_token', json.student.api_token);",
+						"}",
+						"pm.test('status is 200', () => pm.response.code === 200);"
+					] } }]
+				},
+				{
+					"name": "Google Login",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id_token\": \"{{google_id_token}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/students/google-login", "host": ["{{base_url}}"], "path": ["api", "students", "google-login"] },
+						"description": "Log in / auto-register via Firebase Google Sign-In.\n\nValidation: id_token required|string (a real Firebase ID token from the mobile app's Google Sign-In flow — cannot be generated from Postman).\n\nResponse 200: `{ success, message, student: { id, name, email, api_token, avatar } }`. 400 if email couldn't be extracted; 401 if the Firebase token is invalid/expired."
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"if (pm.response.code === 200) {",
+						"    const json = pm.response.json();",
+						"    if (json.student && json.student.api_token) pm.environment.set('api_token', json.student.api_token);",
+						"}"
+					] } }]
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{student_email}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/students/forgot-password", "host": ["{{base_url}}"], "path": ["api", "students", "forgot-password"] },
+						"description": "Request a password reset code. Validation: email required|email|exists:users,email.\n\nGenerates a random 6-digit code, stores it hashed in `password_reset_tokens` (valid 60 minutes), and emails it to the user via the branded Wejha email template.\n\nResponse 200: `{ success: true, message: \"...code sent to your email.\" }`. Check the inbox and set the `reset_code` environment variable manually to test Reset Password below."
+					}
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{student_email}}\",\n    \"code\": \"{{reset_code}}\",\n    \"password\": \"{{new_password}}\",\n    \"password_confirmation\": \"{{new_password}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/students/reset-password", "host": ["{{base_url}}"], "path": ["api", "students", "reset-password"] },
+						"description": "Complete the password reset using the code emailed by Forgot Password.\n\nValidation: email required|email|exists:users,email, code required|string, password required|min:6|confirmed (needs matching `password_confirmation`).\n\nOn success, the password is updated, the reset code is invalidated, and a fresh `api_token` is issued (old token is invalidated as a security measure).\n\nResponse 200: `{ success, message, student: { id, name, email, api_token } }`. Response 400 if the code is wrong or older than 60 minutes."
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"if (pm.response.code === 200) {",
+						"    const json = pm.response.json();",
+						"    if (json.student && json.student.api_token) pm.environment.set('api_token', json.student.api_token);",
+						"    pm.environment.set('student_password', pm.environment.get('new_password'));",
+						"}"
+					] } }]
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": { "raw": "{{base_url}}/api/logout", "host": ["{{base_url}}"], "path": ["api", "logout"] },
+						"description": "Invalidate the current session by nulling the stored `api_token` server-side. There was previously no way to log out at all — the token lived forever. After this call the token used in the request is permanently dead; the next Login/Register call will issue a new one.\n\nResponse 200: `{ success: true, message: \"...Logged out successfully.\" }`."
+					}
+				}
+			],
+			"description": "Public account creation/login endpoints plus password recovery and logout. Test scripts auto-save `api_token` to the environment."
+		},
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "Get My Profile",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": { "raw": "{{base_url}}/api/profile", "host": ["{{base_url}}"], "path": ["api", "profile"] },
+						"description": "Get the authenticated student's full profile. Previously, profile data was only ever returned once at register/login (name, email only) — this exposes everything: name, username, email, phone_number, gender, academic_year, school_name, specialization, avatar, preferred_language, preferred_theme, notification_preferences, status, last_login_at.\n\nResponse 200: `{ success, profile: {...} }`."
+					}
+				},
+				{
+					"name": "Update My Profile",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "PATCH",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"اسم محدث\",\n    \"phone_number\": \"0921112233\",\n    \"academic_year\": \"السنة الرابعة\",\n    \"school_name\": \"جامعة طرابلس\",\n    \"specialization\": \"literary\",\n    \"preferred_language\": \"ar\",\n    \"preferred_theme\": \"dark\",\n    \"notification_preferences\": { \"email\": true, \"push\": true }\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/profile", "host": ["{{base_url}}"], "path": ["api", "profile"] },
+						"description": "Partially update the authenticated student's profile. All fields are optional (`sometimes` validation) — send only what changed.\n\nFields: name, phone_number, gender(male|female), academic_year, school_name, specialization(scientific|literary|علمي|أدبي), avatar (URL string), preferred_language(ar|en), preferred_theme(light|dark|system), notification_preferences (object/array).\n\nNote: email and password are NOT editable here — email has no update endpoint (would require re-verification, out of scope), password has its own dedicated endpoint below. Also no file-upload endpoint exists for avatar; it only accepts a URL string.\n\nAlso works with PUT. Response 200: `{ success, message, profile: {...} }`."
+					}
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "PATCH",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_password\": \"{{student_password}}\",\n    \"new_password\": \"{{new_password}}\",\n    \"new_password_confirmation\": \"{{new_password}}\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/profile/password", "host": ["{{base_url}}"], "path": ["api", "profile", "password"] },
+						"description": "Change password while logged in (different from the Forgot/Reset Password flow, which is for when the student can't log in at all).\n\nValidation: current_password required|string, new_password required|min:6|confirmed (needs matching `new_password_confirmation`).\n\nResponse 200: `{ success: true, message }`. Response 401 if current_password doesn't match."
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"if (pm.response.code === 200) pm.environment.set('student_password', pm.environment.get('new_password'));"
+					] } }]
+				}
+			],
+			"description": "Requires `Authorization: Bearer {{api_token}}`. View/edit the student's own profile and credentials — entirely new; previously no way to read back or update profile data at all."
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "List Events",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": { "raw": "{{base_url}}/api/events", "host": ["{{base_url}}"], "path": ["api", "events"] },
+						"description": "List all published, upcoming events, ordered by event_date ascending.\n\nResponse 200: `{ success, events: [{ id, title_ar, title_en, description_ar, description_en, type(seminar|workshop|exhibition), speaker, event_date, event_time, venue, capacity, banner_image_url, cover_image_url }] }`"
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"pm.test('status is 200', () => pm.response.code === 200);",
+						"const json = pm.response.json();",
+						"if (json.success && json.events && json.events.length > 0) pm.environment.set('event_id', json.events[0].id);"
+					] } }]
+				},
+				{
+					"name": "Get Event by ID",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": { "raw": "{{base_url}}/api/events/{{event_id}}", "host": ["{{base_url}}"], "path": ["api", "events", "{{event_id}}"] },
+						"description": "Get a single event's details by UUID.\n\nResponse 200: `{ success, event: {...same shape as list item...} }`. Response 404 if not found."
+					}
+				},
+				{
+					"name": "Get Event Evaluations",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": { "raw": "{{base_url}}/api/events/{{event_id}}/evaluations", "host": ["{{base_url}}"], "path": ["api", "events", "{{event_id}}", "evaluations"] },
+						"description": "NEW — discover which pre/post-event surveys exist for an event, and get the `evaluation_id` needed by the Surveys endpoints below. Previously there was NO way for the app to find this ID at all, making survey submission unreachable in practice.\n\nOnly returns active evaluations (`is_active=true`).\n\nResponse 200: `{ success, evaluations: [{ id, evaluation_type(pre|post), is_active, template: { id, name_ar, name_en, status, category } }] }`. Response 404 if the event doesn't exist."
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"const json = pm.response.json();",
+						"if (json.success && json.evaluations && json.evaluations.length > 0) pm.environment.set('evaluation_id', json.evaluations[0].id);"
+					] } }]
+				}
+			],
+			"description": "Public event browsing — no authentication required."
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "Register for Event",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": \"{{event_id}}\",\n    \"source\": \"mobile\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/events/register", "host": ["{{base_url}}"], "path": ["api", "events", "register"] },
+						"description": "Register the authenticated student for an event.\n\nValidation: event_id required|uuid|exists:events,id; source string|in:web,mobile,admin (optional, defaults \"web\").\n\nBusiness rules: 400 event not found / registration not open yet / registration closed; 422 event fully booked; 422 already registered.\n\nOn success (201) status is `pending` if the event requires approval, else `approved`; a `qr_hash` ticket is generated and an EventRegistrationEmail is sent.\n\nResponse 201: `{ success, message, registration: { id, status, qr_hash } }`"
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"if (pm.response.code === 201) {",
+						"    const json = pm.response.json();",
+						"    if (json.registration) {",
+						"        pm.environment.set('registration_id', json.registration.id);",
+						"        pm.environment.set('qr_hash', json.registration.qr_hash);",
+						"    }",
+						"}",
+						"pm.test('status is 201, 400 or 422', () => pm.expect([201, 400, 422]).to.include(pm.response.code));"
+					] } }]
+				},
+				{
+					"name": "List My Registrations",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": {
+							"raw": "{{base_url}}/api/registrations?status=upcoming",
+							"host": ["{{base_url}}"],
+							"path": ["api", "registrations"],
+							"query": [{ "key": "status", "value": "upcoming", "description": "optional: upcoming | past", "disabled": false }]
+						},
+						"description": "NEW — \"my bookings\": list the authenticated student's own event registrations, newest first. Previously there was no way to list a student's own bookings at all.\n\nOptional query param `status`: `upcoming` (future, non-cancelled events) or `past` (past events or cancelled registrations). Omit to get everything.\n\nResponse 200: `{ success, registrations: [{ id, status, qr_hash, source, registered_at, checked_in_at, event: { id, title_ar, title_en, type, event_date, event_time, venue, banner_image_url } }] }`"
+					}
+				},
+				{
+					"name": "Get My Ticket (QR)",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": { "raw": "{{base_url}}/api/registrations/{{registration_id}}", "host": ["{{base_url}}"], "path": ["api", "registrations", "{{registration_id}}"] },
+						"description": "NEW — view a single registration's ticket, including the `qr_hash` needed to render the entry QR code. Previously `qr_hash` was returned ONLY once, in the response of Register for Event — if the student closed the app, the ticket was unrecoverable.\n\nScoped to the authenticated user (returns 404, not another user's data, if the registration belongs to someone else).\n\nResponse 200: `{ success, registration: { id, status, qr_hash, source, registered_at, checked_in_at, event: {...} } }`. Response 404 if not found or not owned by the caller."
+					}
+				},
+				{
+					"name": "Cancel Registration",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": { "raw": "{{base_url}}/api/events/cancel/{{registration_id}}", "host": ["{{base_url}}"], "path": ["api", "events", "cancel", "{{registration_id}}"] },
+						"description": "Cancel one of the authenticated student's own registrations. As of this build the endpoint is scoped to the caller (previously any logged-in student could cancel ANY registration by guessing its ID — fixed alongside this collection).\n\nSets status to `cancelled`.\n\nResponse 200: `{ success: true, message: \"تم إلغاء التسجيل بنجاح.\" }`. Response 404 if not found/not owned."
+					}
+				}
+			],
+			"description": "Requires `Authorization: Bearer {{api_token}}`. Register/cancel event bookings and view them afterward."
+		},
+		{
+			"name": "Surveys",
+			"item": [
+				{
+					"name": "Get Survey Questions",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": { "raw": "{{base_url}}/api/surveys/{{evaluation_id}}/questions", "host": ["{{base_url}}"], "path": ["api", "surveys", "{{evaluation_id}}", "questions"] },
+						"description": "NEW — fetch the actual question list (configured via the Filament admin dashboard) for a pre/post-event evaluation, so the app can render the form BEFORE submitting. Previously only a submit endpoint existed with nothing to fetch questions from.\n\n`{{evaluation_id}}` comes from Get Event Evaluations above.\n\nAlso returns `already_submitted` (true if this user has already answered this evaluation — use to avoid re-showing the form) and `can_submit` (false + a `reason` if the user isn't registered for the event, or if it's a post-survey and they haven't checked in yet).\n\nResponse 200: `{ success, evaluation: { id, event_id, evaluation_type }, already_submitted, can_submit, reason, questions: [{ id, type, question_text_ar, question_text_en, description_ar, description_en, help_text_ar, help_text_en, options, is_required, sort_order }] }`.\n\nResponse 404 if evaluation not found; 403 if the survey/template is closed/inactive."
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"const json = pm.response.json();",
+						"if (json.success && json.questions && json.questions.length > 0) pm.environment.set('question_id', json.questions[0].id);"
+					] } }]
+				},
+				{
+					"name": "Submit Survey Answers",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"answers\": [\n        {\n            \"question_id\": \"{{question_id}}\",\n            \"response_text\": \"إجابة نصية تجريبية\"\n        }\n    ]\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/surveys/submit/{{evaluation_id}}", "host": ["{{base_url}}"], "path": ["api", "surveys", "submit", "{{evaluation_id}}"] },
+						"description": "Submit answers to a pre/post-event evaluation. `{{evaluation_id}}` is the `event_evaluations.id` (from Get Event Evaluations), NOT the event id or survey_template id.\n\nValidation: answers required|array|min:1; answers.*.question_id required|uuid|exists:survey_questions,id; answers.*.response_text nullable|string (text/rating/number/date/email/phone questions); answers.*.response_json nullable|array (multiple_choice/checkbox questions).\n\nBusiness rules: 400 evaluation not found / user not registered / required question missing / question doesn't belong to this template; 403 evaluation closed; a \"post\" evaluation additionally requires the user to have checked in first.\n\nEach question can only be answered ONCE per evaluation (DB unique constraint) — resubmitting throws a generic error.\n\nResponse 201: `{ success, message, response_count }`"
+					}
+				}
+			],
+			"description": "Requires `Authorization: Bearer {{api_token}}`. Fetch and submit pre/post-event survey answers."
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "List Notifications",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "GET",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": {
+							"raw": "{{base_url}}/api/notifications?unread_only=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications"],
+							"query": [{ "key": "unread_only", "value": "1", "description": "optional: only unread notifications", "disabled": false }]
+						},
+						"description": "NEW — list the student's in-app notifications. The backend already creates these (via admin-triggered announcements, event reminders, etc.) but there was previously NO endpoint to read them — they silently accumulated with no way for the app to ever display them.\n\nOptional query param `unread_only=1` to filter to unread only.\n\nResponse 200: `{ success, unread_count, notifications: [{ id, title, body, read_at, created_at }] }`"
+					},
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+						"const json = pm.response.json();",
+						"if (json.success && json.notifications && json.notifications.length > 0) pm.environment.set('notification_id', json.notifications[0].id);"
+					] } }]
+				},
+				{
+					"name": "Mark Notification Read",
+					"request": {
+						"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }] },
+						"method": "POST",
+						"header": [{ "key": "Accept", "value": "application/json" }],
+						"url": { "raw": "{{base_url}}/api/notifications/{{notification_id}}/read", "host": ["{{base_url}}"], "path": ["api", "notifications", "{{notification_id}}", "read"] },
+						"description": "NEW — mark a single notification as read. Scoped to the authenticated user's own notifications.\n\nResponse 200: `{ success: true, message }`. Response 404 if not found / not owned."
+					}
+				}
+			],
+			"description": "Requires `Authorization: Bearer {{api_token}}`. In-app notifications inbox — entirely new; the backend generated these already but nothing could read them until now."
+		}
+	],
+	"event": [
+		{ "listen": "prerequest", "script": { "type": "text/javascript", "exec": [""] } },
+		{ "listen": "test", "script": { "type": "text/javascript", "exec": [""] } }
+	],
+	"variable": [
+		{ "key": "base_url", "value": "http://localhost:8000" }
+	]
+}

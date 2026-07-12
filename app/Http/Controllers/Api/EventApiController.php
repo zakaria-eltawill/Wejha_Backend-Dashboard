@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\EventEvaluation;
 use Illuminate\Http\JsonResponse;
 
 class EventApiController extends Controller
@@ -75,6 +76,39 @@ class EventApiController extends Controller
                 'banner_image_url' => $event->banner_image ? asset('storage/' . $event->banner_image) : null,
                 'cover_image_url' => $event->cover_image ? asset('storage/' . $event->cover_image) : null,
             ]
+        ]);
+    }
+
+    public function evaluations(string $id): JsonResponse
+    {
+        $event = Event::find($id);
+
+        if (!$event) {
+            return response()->json([
+                'success' => false,
+                'message' => 'الفعالية غير موجودة / Event not found.'
+            ], 404);
+        }
+
+        $evaluations = EventEvaluation::where('event_id', $id)
+            ->where('is_active', true)
+            ->with('template')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'evaluations' => $evaluations->map(fn (EventEvaluation $evaluation) => [
+                'id' => $evaluation->id,
+                'evaluation_type' => $evaluation->evaluation_type,
+                'is_active' => $evaluation->is_active,
+                'template' => $evaluation->template ? [
+                    'id' => $evaluation->template->id,
+                    'name_ar' => $evaluation->template->name_ar,
+                    'name_en' => $evaluation->template->name_en,
+                    'status' => $evaluation->template->status,
+                    'category' => $evaluation->template->category,
+                ] : null,
+            ]),
         ]);
     }
 }

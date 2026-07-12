@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterForEventRequest;
+use App\Models\Registration;
 use App\Services\RegistrationService;
 use Illuminate\Http\JsonResponse;
 
@@ -44,6 +45,15 @@ class EventBookingController extends Controller
     public function cancel(string $id): JsonResponse
     {
         try {
+            $registration = Registration::where('id', $id)->where('user_id', auth()->id())->first();
+
+            if (!$registration) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'التسجيل غير موجود أو لا تملك صلاحية إلغاءه / Registration not found or access denied.'
+                ], 404);
+            }
+
             $cancelled = $this->registrationService->cancel($id);
 
             if ($cancelled) {

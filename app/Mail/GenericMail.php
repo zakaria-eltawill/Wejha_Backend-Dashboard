@@ -16,7 +16,7 @@ class GenericMail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public function __construct(
-        public string $subject,
+        public string $mailSubject,
         public string $body,
         public array $extraData = []
     ) {}
@@ -24,7 +24,7 @@ class GenericMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->subject,
+            subject: $this->mailSubject,
         );
     }
 

@@ -5,14 +5,22 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ForgotPasswordRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Models\User;
+use App\Services\MailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class StudentAuthController extends Controller
 {
+    public function __construct(
+        protected MailService $mailService
+    ) {}
+
     public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -190,5 +198,74 @@ class StudentAuthController extends Controller
                 'error' => config('app.debug') ? $e->getMessage() : null
             ], 401);
         }
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->update(['api_token' => null]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم تسجيل الخروج بنجاح / Logged out successfully.'
+        ]);
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        $email = $request->validated()['email'];
+        $code = (string) random_int(100000, 999999);
+
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $email],
+            ['token' => Hash::make($code), 'created_at' => now()]
+        );
+
+        $this->mailService->sendEmail(
+            $email,
+            'رمز إعادة تعيين كلمة المرور - منصة وجهة',
+            "<p>رمز إعادة تعيين كلمة المرور الخاص بك هو:</p><h2 style=\"letter-spacing:4px;\">{$code}</h2><p>هذا الرمز صالح لمدة 60 دقيقة. إذا لم تطلب إعادة تعيين كلمة المرور، يمكنك تجاهل هذه الرسالة.</p>"
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم إرسال رمز إعادة تعيين كلمة المرور إلى بريدك الإلكتروني / Password reset code sent to your email.'
+        ]);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+
+        $record = DB::table('password_reset_tokens')->where('email', $validated['email'])->first();
+
+        $expireMinutes = config('auth.passwords.users.expire', 60);
+
+        if (!$record
+            || !Hash::check($validated['code'], $record->token)
+            || now()->diffInMinutes($record->created_at) > $expireMinutes) {
+            return response()->json([
+                'success' => false,
+                'message' => 'رمز إعادة التعيين غير صالح أو منتهي الصلاحية / Reset code is invalid or expired.'
+            ], 400);
+        }
+
+        $user = User::where('email', $validated['email'])->first();
+        $user->update([
+            'password' => Hash::make($validated['password']),
+            'api_token' => Str::random(60),
+        ]);
+
+        DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم إعادة تعيين كلمة المرور بنجاح / Password reset successfully.',
+            'student' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'api_token' => $user->api_token,
+            ]
+        ]);
     }
 }
