@@ -75,47 +75,144 @@ class SurveyTemplateResource extends Resource
                     ])->columns(2),
 
                 Forms\Components\Section::make('أسئلة الاستبيان / Survey Questions')
+                    ->description('أضف أسئلتك واحدًا تلو الآخر. اسحب من المقبض 🟰 لإعادة الترتيب. / Add your questions one at a time. Drag to reorder.')
                     ->schema([
                         Forms\Components\Repeater::make('questions')
-                            ->label('الأسئلة / Questions')
+                            ->label('')
                             ->relationship('questions')
                             ->schema([
-                                Forms\Components\TextInput::make('question_text_ar')
-                                    ->label('نص السؤال بالعربية / Question Text (Arabic)')
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('question_text_en')
-                                    ->label('نص السؤال بالإنجليزية / Question Text (English)')
-                                    ->required()
-                                    ->maxLength(255),
                                 Forms\Components\Select::make('type')
                                     ->label('نوع السؤال / Question Type')
-                                    ->options(collect(QuestionType::cases())->mapWithKeys(fn ($q) => [$q->value => $q->labelAr()]))
-                                    ->reactive()
-                                    ->required(),
-                                Forms\Components\KeyValue::make('options')
+                                    ->helperText('اختر شكل الإجابة التي تريدها من الطالب. / Choose how the student will answer.')
+                                    ->options(
+                                        collect(QuestionType::cases())->mapWithKeys(
+                                            fn (QuestionType $type) => [$type->value => self::questionTypeIcon($type) . ' ' . $type->labelAr()]
+                                        )
+                                    )
+                                    ->native(false)
+                                    ->live()
+                                    ->required()
+                                    ->columnSpanFull(),
+
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('question_text_ar')
+                                            ->label('عنوان السؤال بالعربية / Question (Arabic)')
+                                            ->placeholder('مثال: ما مدى رضاك عن الفعالية؟')
+                                            ->required()
+                                            ->live(onBlur: true)
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('question_text_en')
+                                            ->label('عنوان السؤال بالإنجليزية / Question (English)')
+                                            ->placeholder('e.g. How satisfied were you with the event?')
+                                            ->required()
+                                            ->maxLength(255),
+                                    ]),
+
+                                Forms\Components\Repeater::make('options')
                                     ->label('خيارات الإجابة / Answer Options')
-                                    ->keyLabel('المفتاح / Key')
-                                    ->valueLabel('القيمة / Label')
-                                    ->visible(fn (callable $get) => in_array($get('type'), ['multiple_choice', 'checkbox', 'rating'])),
+                                    ->helperText('أضف كل خيار في سطر منفصل، بنفس الترتيب الذي سيراه الطالب. / Add each choice on its own line, in the order students will see them.')
+                                    ->simple(
+                                        Forms\Components\TextInput::make('value')
+                                            ->label('الخيار / Option')
+                                            ->required()
+                                            ->maxLength(255)
+                                    )
+                                    ->addActionLabel('+ إضافة خيار / Add option')
+                                    ->reorderable()
+                                    ->defaultItems(2)
+                                    ->visible(fn (callable $get) => in_array($get('type'), ['multiple_choice', 'checkbox']))
+                                    ->columnSpanFull(),
+
                                 Forms\Components\Toggle::make('is_required')
-                                    ->label('إجباري / Required')
-                                    ->default(true),
-                                Forms\Components\TextInput::make('score')
-                                    ->label('الدرجة / Score')
-                                    ->numeric()
-                                    ->default(0),
-                                Forms\Components\TextInput::make('sort_order')
-                                    ->label('ترتيب السؤال / Order')
-                                    ->numeric()
-                                    ->default(0),
+                                    ->label('سؤال إجباري؟ / Required question?')
+                                    ->helperText('لن يتمكن الطالب من إرسال الاستبيان دون الإجابة على هذا السؤال. / Student cannot submit the survey without answering this.')
+                                    ->default(true)
+                                    ->columnSpanFull(),
+
+                                Forms\Components\Section::make('تفاصيل إضافية (اختياري) / Additional details (optional)')
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        Forms\Components\Grid::make(2)
+                                            ->schema([
+                                                Forms\Components\Textarea::make('description_ar')
+                                                    ->label('وصف/توضيح بالعربية / Description (Arabic)')
+                                                    ->helperText('نص إضافي يظهر تحت عنوان السؤال لتوضيحه للطالب.')
+                                                    ->rows(2),
+                                                Forms\Components\Textarea::make('description_en')
+                                                    ->label('وصف/توضيح بالإنجليزية / Description (English)')
+                                                    ->rows(2),
+                                            ]),
+                                        Forms\Components\Grid::make(2)
+                                            ->schema([
+                                                Forms\Components\TextInput::make('help_text_ar')
+                                                    ->label('نص مساعد بالعربية / Help text (Arabic)')
+                                                    ->maxLength(255),
+                                                Forms\Components\TextInput::make('help_text_en')
+                                                    ->label('نص مساعد بالإنجليزية / Help text (English)')
+                                                    ->maxLength(255),
+                                            ]),
+                                        Forms\Components\TextInput::make('score')
+                                            ->label('الدرجة / Score')
+                                            ->helperText('تُستخدم فقط إذا كان هذا الاستبيان لأغراض التقييم/التصحيح.')
+                                            ->numeric()
+                                            ->default(0),
+                                    ]),
                             ])
+                            ->itemLabel(fn (array $state): string => self::questionItemLabel($state))
                             ->orderColumn('sort_order')
+                            ->reorderable()
+                            ->collapsible()
+                            ->cloneable()
+                            ->deleteAction(
+                                fn (Forms\Components\Actions\Action $action) => $action
+                                    ->requiresConfirmation()
+                                    ->modalHeading('حذف هذا السؤال؟ / Delete this question?')
+                                    ->modalDescription('سيتم حذف السؤال وكل إجابات الطلاب عليه نهائيًا، ولا يمكن التراجع عن هذا الإجراء. / This permanently deletes the question and any student answers to it. This cannot be undone.')
+                                    ->modalSubmitActionLabel('نعم، احذف / Yes, delete')
+                            )
+                            ->addActionLabel('+ إضافة سؤال جديد / Add new question')
                             ->defaultItems(1)
-                            ->columns(2)
-                            ->columnSpanFull()
-                    ])
+                            ->columns(1)
+                            ->columnSpanFull(),
+                    ]),
             ]);
+    }
+
+    protected static function questionTypeIcon(QuestionType $type): string
+    {
+        return match ($type) {
+            QuestionType::TEXT => '✏️',
+            QuestionType::TEXTAREA => '📝',
+            QuestionType::RATING => '⭐',
+            QuestionType::MULTIPLE_CHOICE => '🔘',
+            QuestionType::CHECKBOX => '☑️',
+            QuestionType::NUMBER => '🔢',
+            QuestionType::DATE => '📅',
+            QuestionType::EMAIL => '✉️',
+            QuestionType::PHONE => '📞',
+        };
+    }
+
+    protected static function questionItemLabel(array $state): string
+    {
+        $title = trim($state['question_text_ar'] ?? '');
+        $icon = '❓';
+
+        if (!empty($state['type'])) {
+            $type = QuestionType::tryFrom($state['type']);
+            if ($type) {
+                $icon = self::questionTypeIcon($type);
+            }
+        }
+
+        $required = ($state['is_required'] ?? true) ? '' : ' (اختياري)';
+
+        return $title !== ''
+            ? "{$icon} {$title}{$required}"
+            : "{$icon} سؤال جديد / New question";
     }
 
     public static function table(Table $table): Table
@@ -158,6 +255,12 @@ class SurveyTemplateResource extends Resource
                     ->label('عدد الأسئلة'),
             ])
             ->actions([
+                Tables\Actions\Action::make('preview')
+                    ->label('معاينة / Preview')
+                    ->icon('heroicon-o-eye')
+                    ->color('gray')
+                    ->url(fn (SurveyTemplate $record) => static::getUrl('preview', ['record' => $record])),
+
                 Tables\Actions\Action::make('clone')
                     ->label('نسخ / Clone')
                     ->icon('heroicon-o-document-duplicate')
@@ -193,6 +296,7 @@ class SurveyTemplateResource extends Resource
             'index' => \App\Filament\Resources\SurveyTemplateResource\Pages\ListSurveyTemplates::route('/'),
             'create' => \App\Filament\Resources\SurveyTemplateResource\Pages\CreateSurveyTemplate::route('/create'),
             'edit' => \App\Filament\Resources\SurveyTemplateResource\Pages\EditSurveyTemplate::route('/{record}/edit'),
+            'preview' => \App\Filament\Resources\SurveyTemplateResource\Pages\PreviewSurveyTemplate::route('/{record}/preview'),
         ];
     }
 }

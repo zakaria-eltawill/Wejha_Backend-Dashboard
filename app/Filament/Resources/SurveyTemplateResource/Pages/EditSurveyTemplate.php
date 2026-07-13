@@ -15,6 +15,11 @@ class EditSurveyTemplate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('preview')
+                ->label('معاينة الاستبيان / Preview')
+                ->icon('heroicon-o-eye')
+                ->color('gray')
+                ->url(fn () => SurveyTemplateResource::getUrl('preview', ['record' => $this->record])),
             Actions\DeleteAction::make(),
         ];
     }

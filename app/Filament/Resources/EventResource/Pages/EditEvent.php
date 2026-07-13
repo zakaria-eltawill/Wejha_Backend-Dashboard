@@ -23,4 +23,9 @@ class EditEvent extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function afterSave(): void
+    {
+        EventResource::syncSurveyEvaluations($this->record, $this->data);
+    }
 }

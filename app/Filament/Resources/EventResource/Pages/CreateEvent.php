@@ -17,4 +17,9 @@ class CreateEvent extends CreateRecord
 
         return $data;
     }
+
+    protected function afterCreate(): void
+    {
+        EventResource::syncSurveyEvaluations($this->record, $this->data);
+    }
 }

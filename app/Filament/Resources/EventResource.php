@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\Resources;
 
 use App\Models\Event;
+use App\Models\EventEvaluation;
+use App\Models\SurveyTemplate;
 use App\Enums\EventType;
 use App\Enums\EventStatus;
 use Filament\Forms;
@@ -130,8 +132,65 @@ class EventResource extends Resource
                                 ->label('ملاحظات المنظمين / Organizer Notes')
                                 ->rows(3),
                         ])->columns(2),
+
+                    Wizard\Step::make('الاستبيانات / Surveys')
+                        ->schema([
+                            Forms\Components\Select::make('pre_survey_template_id')
+                                ->label('اختر الاستبيان القبلي / Pre-Survey')
+                                ->helperText('يظهر هذا الاستبيان للطالب عند التسجيل في الفعالية. اتركه فارغًا إن لم ترغب باستبيان قبلي. / Shown to the student when they register. Leave empty for none.')
+                                ->options(fn () => SurveyTemplate::where('type', 'pre')->pluck('name_ar', 'id'))
+                                ->searchable()
+                                ->preload()
+                                ->native(false)
+                                ->dehydrated(false)
+                                ->afterStateHydrated(function (Forms\Components\Select $component, $record) {
+                                    if ($record) {
+                                        $component->state(
+                                            $record->evaluations()->where('evaluation_type', 'pre')->value('survey_template_id')
+                                        );
+                                    }
+                                }),
+                            Forms\Components\Select::make('post_survey_template_id')
+                                ->label('اختر الاستبيان البعدي / Post-Survey')
+                                ->helperText('يظهر هذا الاستبيان للطالب بعد تسجيل حضوره في الفعالية. اتركه فارغًا إن لم ترغب باستبيان بعدي. / Shown to the student after they check in. Leave empty for none.')
+                                ->options(fn () => SurveyTemplate::where('type', 'post')->pluck('name_ar', 'id'))
+                                ->searchable()
+                                ->preload()
+                                ->native(false)
+                                ->dehydrated(false)
+                                ->afterStateHydrated(function (Forms\Components\Select $component, $record) {
+                                    if ($record) {
+                                        $component->state(
+                                            $record->evaluations()->where('evaluation_type', 'post')->value('survey_template_id')
+                                        );
+                                    }
+                                }),
+                        ])->columns(2),
                 ])->columnSpanFull()
             ]);
+    }
+
+    /**
+     * Syncs the pre/post survey Select values from the Event form (which are virtual,
+     * dehydrated(false) fields) into the event_evaluations join table, since Event has
+     * no pre_survey_id/post_survey_id columns of its own.
+     */
+    public static function syncSurveyEvaluations(Event $event, array $data): void
+    {
+        foreach (['pre', 'post'] as $type) {
+            $templateId = $data["{$type}_survey_template_id"] ?? null;
+
+            if ($templateId) {
+                EventEvaluation::updateOrCreate(
+                    ['event_id' => $event->id, 'evaluation_type' => $type],
+                    ['survey_template_id' => $templateId, 'is_active' => true]
+                );
+            } else {
+                EventEvaluation::where('event_id', $event->id)
+                    ->where('evaluation_type', $type)
+                    ->delete();
+            }
+        }
     }
 
     public static function table(Table $table): Table
@@ -202,7 +261,6 @@ class EventResource extends Resource
     {
         return [
             \App\Filament\Resources\EventResource\RelationManagers\RegistrationsRelationManager::class,
-            \App\Filament\Resources\EventResource\RelationManagers\EvaluationsRelationManager::class,
             \App\Filament\Resources\EventResource\RelationManagers\SurveyResponsesRelationManager::class,
             \App\Filament\Resources\EventResource\RelationManagers\ActivitiesRelationManager::class,
         ];
