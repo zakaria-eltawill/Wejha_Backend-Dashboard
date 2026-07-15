@@ -24,7 +24,17 @@ class EventResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'إدارة الفعاليات / Events';
+        return __('filament-events.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament-events.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-events.plural_model_label');
     }
 
     public static function form(Form $form): Form
@@ -32,112 +42,112 @@ class EventResource extends Resource
         return $form
             ->schema([
                 Wizard::make([
-                    Wizard\Step::make('معلومات الفعالية / General Info')
+                    Wizard\Step::make(__('filament-events.steps.general_info'))
                         ->schema([
                             Forms\Components\TextInput::make('title_ar')
-                                ->label('العنوان (بالعربية) / Title (Arabic)')
+                                ->label(__('filament-events.fields.title_ar'))
                                 ->required()
                                 ->maxLength(255),
                             Forms\Components\TextInput::make('title_en')
-                                ->label('العنوان (بالإنجليزية) / Title (English)')
+                                ->label(__('filament-events.fields.title_en'))
                                 ->required()
                                 ->maxLength(255),
                             Forms\Components\Textarea::make('description_ar')
-                                ->label('الوصف (بالعربية) / Description (Arabic)')
+                                ->label(__('filament-events.fields.description_ar'))
                                 ->rows(3),
                             Forms\Components\Textarea::make('description_en')
-                                ->label('الوصف (بالإنجليزية) / Description (English)')
+                                ->label(__('filament-events.fields.description_en'))
                                 ->rows(3),
                             Forms\Components\Select::make('type')
-                                ->label('نوع الفعالية / Type')
+                                ->label(__('filament-events.fields.type'))
                                 ->options([
-                                    'seminar' => 'ندوة / Seminar',
-                                    'workshop' => 'ورشة عمل / Workshop',
-                                    'exhibition' => 'معرض / Exhibition',
+                                    'seminar' => __('filament-events.type.seminar'),
+                                    'workshop' => __('filament-events.type.workshop'),
+                                    'exhibition' => __('filament-events.type.exhibition'),
                                 ])
                                 ->required(),
                             Forms\Components\TextInput::make('speaker')
-                                ->label('المتحدث / Speaker')
+                                ->label(__('filament-events.fields.speaker'))
                                 ->maxLength(255),
                             Forms\Components\Select::make('status')
-                                ->label('الحالة / Status')
+                                ->label(__('filament-events.fields.status'))
                                 ->options([
-                                    'draft' => 'مسودة / Draft',
-                                    'published' => 'منشور / Published',
-                                    'archived' => 'مؤرشف / Archived',
+                                    'draft' => __('filament-events.event_status.draft'),
+                                    'published' => __('filament-events.event_status.published'),
+                                    'archived' => __('filament-events.event_status.archived'),
                                 ])
                                 ->required()
                                 ->default('draft'),
                             Forms\Components\Select::make('visibility')
-                                ->label('الظهور / Visibility')
+                                ->label(__('filament-events.fields.visibility'))
                                 ->options([
-                                    'public' => 'عام / Public',
-                                    'private' => 'خاص / Private',
+                                    'public' => __('filament-events.visibility.public'),
+                                    'private' => __('filament-events.visibility.private'),
                                 ])
                                 ->required()
                                 ->default('public'),
                             Forms\Components\Toggle::make('featured')
-                                ->label('مميز (تثبيت في البداية) / Featured')
+                                ->label(__('filament-events.fields.featured'))
                                 ->default(false),
                             Forms\Components\FileUpload::make('banner_image')
-                                ->label('صورة البانر / Banner Image')
+                                ->label(__('filament-events.fields.banner_image'))
                                 ->image()
                                 ->directory('banners'),
                             Forms\Components\FileUpload::make('cover_image')
-                                ->label('صورة الغلاف / Cover Image')
+                                ->label(__('filament-events.fields.cover_image'))
                                 ->image()
                                 ->directory('covers'),
                         ])->columns(2),
 
-                    Wizard\Step::make('التفاصيل اللوجستية / Logistics')
+                    Wizard\Step::make(__('filament-events.steps.logistics'))
                         ->schema([
                             Forms\Components\DatePicker::make('event_date')
-                                ->label('تاريخ الفعالية / Date')
+                                ->label(__('filament-events.fields.event_date'))
                                 ->required(),
                             Forms\Components\TextInput::make('event_time')
-                                ->label('وقت الفعالية / Time')
+                                ->label(__('filament-events.fields.event_time'))
                                 ->placeholder('HH:MM')
                                 ->required(),
                             Forms\Components\TextInput::make('venue')
-                                ->label('الموقع / Venue')
+                                ->label(__('filament-events.fields.venue'))
                                 ->required()
                                 ->maxLength(255),
                             Forms\Components\TextInput::make('venue_map_url')
-                                ->label('رابط خريطة الموقع / Map URL')
+                                ->label(__('filament-events.fields.venue_map_url'))
                                 ->url()
                                 ->maxLength(255),
                             Forms\Components\TextInput::make('capacity')
-                                ->label('السعة الاستيعابية / Capacity')
+                                ->label(__('filament-events.fields.capacity'))
                                 ->numeric()
                                 ->required()
                                 ->default(100),
                         ])->columns(2),
 
-                    Wizard\Step::make('التسجيل والحضور / Registration')
+                    Wizard\Step::make(__('filament-events.steps.registration'))
                         ->schema([
                             Forms\Components\DateTimePicker::make('registration_opens_at')
-                                ->label('تاريخ فتح التسجيل / Registration Opens'),
+                                ->label(__('filament-events.fields.registration_opens_at')),
                             Forms\Components\DateTimePicker::make('registration_closes_at')
-                                ->label('تاريخ إغلاق التسجيل / Registration Closes'),
+                                ->label(__('filament-events.fields.registration_closes_at')),
                             Forms\Components\Toggle::make('qr_attendance_enabled')
-                                ->label('تفعيل تحضير QR / QR Check-In')
+                                ->label(__('filament-events.fields.qr_attendance_enabled'))
                                 ->default(true),
                             Forms\Components\Toggle::make('requires_approval')
-                                ->label('يتطلب موافقة للتسجيل / Requires Approval')
+                                ->label(__('filament-events.fields.requires_approval'))
                                 ->default(false),
                             Forms\Components\TextInput::make('contact_person')
-                                ->label('مسؤول التواصل / Contact Person')
+                                ->label(__('filament-events.fields.contact_person'))
                                 ->maxLength(255),
                             Forms\Components\Textarea::make('organizer_notes')
-                                ->label('ملاحظات المنظمين / Organizer Notes')
+                                ->label(__('filament-events.fields.organizer_notes'))
                                 ->rows(3),
                         ])->columns(2),
 
-                    Wizard\Step::make('الاستبيانات / Surveys')
+                    Wizard\Step::make(__('filament-events.steps.surveys'))
                         ->schema([
                             Forms\Components\Select::make('pre_survey_template_id')
-                                ->label('اختر الاستبيان القبلي / Pre-Survey')
-                                ->helperText('يظهر هذا الاستبيان للطالب عند التسجيل في الفعالية. اتركه فارغًا إن لم ترغب باستبيان قبلي. / Shown to the student when they register. Leave empty for none.')
+                                ->label(__('filament-events.fields.pre_survey_template_id'))
+                                ->helperText(__('filament-events.helper_texts.pre_survey'))
                                 ->options(fn () => SurveyTemplate::where('type', 'pre')->pluck('name_ar', 'id'))
                                 ->searchable()
                                 ->preload()
@@ -151,8 +161,8 @@ class EventResource extends Resource
                                     }
                                 }),
                             Forms\Components\Select::make('post_survey_template_id')
-                                ->label('اختر الاستبيان البعدي / Post-Survey')
-                                ->helperText('يظهر هذا الاستبيان للطالب بعد تسجيل حضوره في الفعالية. اتركه فارغًا إن لم ترغب باستبيان بعدي. / Shown to the student after they check in. Leave empty for none.')
+                                ->label(__('filament-events.fields.post_survey_template_id'))
+                                ->helperText(__('filament-events.helper_texts.post_survey'))
                                 ->options(fn () => SurveyTemplate::where('type', 'post')->pluck('name_ar', 'id'))
                                 ->searchable()
                                 ->preload()
@@ -198,25 +208,25 @@ class EventResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title_ar')
-                    ->label('عنوان الفعالية بالعربية / Title (Arabic)')
+                    ->label(__('filament-events.table.columns.title_ar'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->label('النوع / Type')
+                    ->label(__('filament-events.table.columns.type'))
                     ->badge()
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('event_date')
-                    ->label('التاريخ / Date')
+                    ->label(__('filament-events.table.columns.event_date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('venue')
-                    ->label('الموقع / Venue')
+                    ->label(__('filament-events.fields.venue'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('capacity')
-                    ->label('السعة / Capacity')
+                    ->label(__('filament-events.table.columns.capacity'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('الحالة / Status')
+                    ->label(__('filament-events.fields.status'))
                     ->badge()
                     ->color(fn ($state): string => match ($state?->value) {
                         'draft' => 'gray',
@@ -225,25 +235,25 @@ class EventResource extends Resource
                         default => 'primary',
                     }),
                 Tables\Columns\ToggleColumn::make('featured')
-                    ->label('مثبتة / Featured'),
+                    ->label(__('filament-events.table.columns.featured')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
                     ->options([
-                        'seminar' => 'ندوة / Seminar',
-                        'workshop' => 'ورشة عمل / Workshop',
-                        'exhibition' => 'معرض / Exhibition',
+                        'seminar' => __('filament-events.type.seminar'),
+                        'workshop' => __('filament-events.type.workshop'),
+                        'exhibition' => __('filament-events.type.exhibition'),
                     ]),
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'draft' => 'مسودة / Draft',
-                        'published' => 'منشور / Published',
-                        'archived' => 'مؤرشف / Archived',
+                        'draft' => __('filament-events.event_status.draft'),
+                        'published' => __('filament-events.event_status.published'),
+                        'archived' => __('filament-events.event_status.archived'),
                     ]),
             ])
             ->actions([
                 Tables\Actions\Action::make('scan')
-                    ->label('مسح / Scan')
+                    ->label(__('filament-events.actions.scan'))
                     ->icon('heroicon-m-qr-code')
                     ->color('warning')
                     ->url(fn (Event $record) => static::getUrl('scan', ['record' => $record])),

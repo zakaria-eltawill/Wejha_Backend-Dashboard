@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
-            ->brandName('منصة وجهة 2026')
+            ->brandName(app()->getLocale() === 'ar' ? 'منصة وجهة 2026' : 'Wejha Platform 2026')
             ->brandLogo(asset('assets/logo/wejha_logo_vertical_blue_navy_gradient_transparent.png'))
             ->darkModeBrandLogo(asset('assets/logo/wejha_logo_vertical_light_gradient_transparent.png'))
             ->brandLogoHeight('8rem')
@@ -55,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
                 AuthenticateSession::class,
+                \App\Http\Middleware\SetAppLocale::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
@@ -77,7 +78,16 @@ class AdminPanelProvider extends PanelProvider
 
         \Filament\Support\Facades\FilamentView::registerRenderHook(
             \Filament\View\PanelsRenderHook::TOPBAR_START,
-            fn (): \Illuminate\Support\HtmlString => new \Illuminate\Support\HtmlString('<span class="text-sm md:text-base font-bold text-primary-600 dark:text-primary-400 px-4">منصة وجهة الرقمية 2026</span>'),
+            fn (): \Illuminate\Support\HtmlString => new \Illuminate\Support\HtmlString(
+                '<span class="text-sm md:text-base font-bold text-primary-600 dark:text-primary-400 px-4">'
+                . (app()->getLocale() === 'ar' ? 'منصة وجهة الرقمية 2026' : 'Wejha Digital Platform 2026')
+                . '</span>'
+            ),
+        );
+
+        \Filament\Support\Facades\FilamentView::registerRenderHook(
+            \Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+            fn (): \Illuminate\Contracts\View\View => view('filament.partials.locale-switcher'),
         );
     }
 }

@@ -20,7 +20,17 @@ class NotificationResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'الإشعارات والاتصالات / Notifications';
+        return __('filament-notifications-audit.notifications.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament-notifications-audit.notifications.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-notifications-audit.notifications.plural_model_label');
     }
 
     public static function form(Form $form): Form
@@ -30,59 +40,59 @@ class NotificationResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('title_ar')
-                            ->label('العنوان (بالعربية) / Title (Arabic)')
+                            ->label(__('filament-notifications-audit.notifications.fields.title_ar'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('title_en')
-                            ->label('العنوان (بالإنجليزية) / Title (English)')
+                            ->label(__('filament-notifications-audit.notifications.fields.title_en'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('content_ar')
-                            ->label('المحتوى (بالعربية) / Content (Arabic)')
+                            ->label(__('filament-notifications-audit.notifications.fields.content_ar'))
                             ->required()
                             ->rows(3),
                         Forms\Components\Textarea::make('content_en')
-                            ->label('المحتوى (بالإنجليزية) / Content (English)')
+                            ->label(__('filament-notifications-audit.notifications.fields.content_en'))
                             ->required()
                             ->rows(3),
                         Forms\Components\Select::make('recipient_type')
-                            ->label('نوع المستلمين / Recipient Group')
+                            ->label(__('filament-notifications-audit.notifications.fields.recipient_type'))
                             ->options([
-                                'all' => 'الكل / All Active Users',
-                                'individual' => 'مستخدم محدد / Specific User',
-                                'role' => 'مجموعة صلاحية / Specific Role Group',
-                                'event' => 'المسجلون في فعالية / Event Attendees',
+                                'all' => __('filament-notifications-audit.notifications.recipient_type.all'),
+                                'individual' => __('filament-notifications-audit.notifications.recipient_type.individual'),
+                                'role' => __('filament-notifications-audit.notifications.recipient_type.role'),
+                                'event' => __('filament-notifications-audit.notifications.recipient_type.event'),
                             ])
                             ->reactive()
                             ->required()
                             ->default('all'),
                         Forms\Components\Select::make('user_id')
-                            ->label('المستخدم المستهدف / Target User')
+                            ->label(__('filament-notifications-audit.notifications.fields.user_id'))
                             ->relationship('user', 'name')
                             ->searchable()
                             ->visible(fn (callable $get) => $get('recipient_type') === 'individual')
                             ->required(fn (callable $get) => $get('recipient_type') === 'individual'),
                         Forms\Components\Select::make('role_id')
-                            ->label('المجموعة المستهدفة / Target Role')
+                            ->label(__('filament-notifications-audit.notifications.fields.role_id'))
                             ->relationship('role', 'name')
                             ->visible(fn (callable $get) => $get('recipient_type') === 'role')
                             ->required(fn (callable $get) => $get('recipient_type') === 'role'),
                         Forms\Components\Select::make('event_id')
-                            ->label('الفعالية المستهدفة / Target Event')
+                            ->label(__('filament-notifications-audit.notifications.fields.event_id'))
                             ->relationship('event', 'title_ar')
                             ->visible(fn (callable $get) => $get('recipient_type') === 'event')
                             ->required(fn (callable $get) => $get('recipient_type') === 'event'),
                         Forms\Components\DateTimePicker::make('scheduled_at')
-                            ->label('وقت الجدولة / Scheduled At')
-                            ->placeholder('اتركه فارغاً للإرسال الفوري'),
+                            ->label(__('filament-notifications-audit.notifications.fields.scheduled_at'))
+                            ->placeholder(__('filament-notifications-audit.notifications.fields.scheduled_at_placeholder')),
                         Forms\Components\Select::make('status')
-                            ->label('الحالة / Status')
+                            ->label(__('filament-notifications-audit.notifications.fields.status'))
                             ->options([
-                                'draft' => 'مسودة / Draft',
-                                'scheduled' => 'مجدول / Scheduled',
-                                'processing' => 'جارِ الإرسال / Processing',
-                                'sent' => 'تم الإرسال / Sent',
-                                'failed' => 'فشل / Failed',
+                                'draft' => __('filament-notifications-audit.notifications.status.draft'),
+                                'scheduled' => __('filament-notifications-audit.notifications.status.scheduled'),
+                                'processing' => __('filament-notifications-audit.notifications.status.processing'),
+                                'sent' => __('filament-notifications-audit.notifications.status.sent'),
+                                'failed' => __('filament-notifications-audit.notifications.status.failed'),
                             ])
                             ->required()
                             ->default('draft')
@@ -96,15 +106,15 @@ class NotificationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title_ar')
-                    ->label('عنوان الإشعار / Title')
+                    ->label(__('filament-notifications-audit.notifications.table.title'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('recipient_type')
-                    ->label('نوع المستلمين / Recipient Group')
+                    ->label(__('filament-notifications-audit.notifications.table.recipient_type'))
                     ->badge()
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('الحالة / Status')
+                    ->label(__('filament-notifications-audit.notifications.table.status'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -115,17 +125,17 @@ class NotificationResource extends Resource
                         default => 'primary',
                     }),
                 Tables\Columns\TextColumn::make('scheduled_at')
-                    ->label('مجدول في / Scheduled At')
+                    ->label(__('filament-notifications-audit.notifications.table.scheduled_at'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('delivered_at')
-                    ->label('تم الإرسال في / Sent At')
+                    ->label(__('filament-notifications-audit.notifications.table.delivered_at'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->actions([
                 Tables\Actions\Action::make('send')
-                    ->label('إرسال الآن / Send Now')
+                    ->label(__('filament-notifications-audit.notifications.actions.send_now'))
                     ->icon('heroicon-o-paper-airplane')
                     ->color('success')
                     ->visible(fn (Notification $record): bool => in_array($record->status, ['draft', 'failed']))

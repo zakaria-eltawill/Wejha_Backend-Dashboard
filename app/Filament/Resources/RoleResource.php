@@ -20,7 +20,17 @@ class RoleResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'الصلاحيات / Roles';
+        return __('filament-roles-permissions.roles.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament-roles-permissions.roles.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-roles-permissions.roles.plural_model_label');
     }
 
     public static function canViewAny(): bool
@@ -35,17 +45,17 @@ class RoleResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('اسم الدور / Role Name')
+                            ->label(__('filament-roles-permissions.roles.fields.name'))
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('guard_name')
-                            ->label('الحارس / Guard')
+                            ->label(__('filament-roles-permissions.roles.fields.guard_name'))
                             ->required()
                             ->default('web')
                             ->maxLength(255),
                         Forms\Components\Select::make('permissions')
-                            ->label('الصلاحيات الممنوحة / Permissions')
+                            ->label(__('filament-roles-permissions.roles.fields.permissions'))
                             ->multiple()
                             ->relationship('permissions', 'name')
                             ->preload(),
@@ -58,14 +68,14 @@ class RoleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('اسم الدور / Role Name')
+                    ->label(__('filament-roles-permissions.roles.table.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('guard_name')
-                    ->label('الحارس / Guard')
+                    ->label(__('filament-roles-permissions.roles.table.guard_name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('permissions.name')
-                    ->label('الصلاحيات / Permissions')
+                    ->label(__('filament-roles-permissions.roles.table.permissions'))
                     ->badge()
                     ->color('warning')
                     ->limitList(5),

@@ -19,7 +19,7 @@ class RegistrationsRelationManager extends RelationManager
 
     public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
     {
-        return 'التسجيلات والحضور / Registrations & Attendance';
+        return __('filament-events.relation_managers.registrations.title');
     }
 
     public function form(Form $form): Form
@@ -34,34 +34,34 @@ class RegistrationsRelationManager extends RelationManager
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->label('الاسم / Name'),
+                            ->label(__('filament-events.fields.name')),
                         Forms\Components\TextInput::make('email')
                             ->email()
                             ->required()
                             ->unique('users', 'email')
                             ->maxLength(255)
-                            ->label('البريد الإلكتروني / Email'),
+                            ->label(__('filament-events.fields.email')),
                         Forms\Components\TextInput::make('phone_number')
                             ->maxLength(20)
-                            ->label('رقم الجوال / Phone'),
+                            ->label(__('filament-events.fields.phone')),
                         Forms\Components\TextInput::make('school_name')
                             ->maxLength(255)
-                            ->label('المدرسة / School'),
+                            ->label(__('filament-events.fields.school')),
                         Forms\Components\Select::make('specialization')
                             ->options([
-                                'علمي' => 'علمي / Scientific',
-                                'أدبي' => 'أدبي / Literary',
+                                'علمي' => __('filament-events.specialization.scientific'),
+                                'أدبي' => __('filament-events.specialization.literary'),
                             ])
-                            ->label('التخصص / Specialization'),
+                            ->label(__('filament-events.fields.specialization')),
                         Forms\Components\TextInput::make('academic_year')
                             ->maxLength(50)
-                            ->label('السنة الدراسية / Year'),
+                            ->label(__('filament-events.fields.academic_year')),
                         Forms\Components\Select::make('gender')
                             ->options([
-                                'male' => 'ذكر / Male',
-                                'female' => 'أنثى / Female',
+                                'male' => __('filament-events.gender.male'),
+                                'female' => __('filament-events.gender.female'),
                             ])
-                            ->label('الجنس / Gender'),
+                            ->label(__('filament-events.fields.gender')),
                         Forms\Components\Hidden::make('password')
                             ->default(fn () => \Illuminate\Support\Facades\Hash::make('wejha2026password')),
                         Forms\Components\Hidden::make('status')
@@ -69,19 +69,19 @@ class RegistrationsRelationManager extends RelationManager
                     ]),
                 Forms\Components\Select::make('status')
                     ->options([
-                        'pending' => 'قيد الانتظار / Pending',
-                        'approved' => 'مقبول / Approved',
-                        'rejected' => 'مرفوض / Rejected',
-                        'cancelled' => 'ملغي / Cancelled',
-                        'checked_in' => 'تم تسجيل الحضور / Checked In',
+                        'pending' => __('filament-events.registration_status.pending'),
+                        'approved' => __('filament-events.registration_status.approved'),
+                        'rejected' => __('filament-events.registration_status.rejected'),
+                        'cancelled' => __('filament-events.registration_status.cancelled'),
+                        'checked_in' => __('filament-events.registration_status.checked_in'),
                     ])
                     ->required()
                     ->default('pending'),
                 Forms\Components\Select::make('source')
                     ->options([
-                        'web' => 'الموقع الإلكتروني / Web',
-                        'mobile' => 'تطبيق الجوال / Mobile',
-                        'admin' => 'لوحة التحكم / Admin Panel',
+                        'web' => __('filament-events.source.web'),
+                        'mobile' => __('filament-events.source.mobile'),
+                        'admin' => __('filament-events.source.admin'),
                     ])
                     ->required()
                     ->default('admin'),
@@ -94,27 +94,27 @@ class RegistrationsRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->columns([
                  Tables\Columns\TextColumn::make('user.name')
-                    ->label('اسم المشارك / Name')
+                    ->label(__('filament-events.table.columns.participant_name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.email')
-                    ->label('البريد الإلكتروني / Email')
+                    ->label(__('filament-events.fields.email'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.phone_number')
-                    ->label('رقم الجوال / Phone')
+                    ->label(__('filament-events.fields.phone'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.school_name')
-                    ->label('المدرسة / School')
+                    ->label(__('filament-events.fields.school'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.specialization')
-                    ->label('التخصص / Track')
+                    ->label(__('filament-events.table.columns.specialization'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.academic_year')
-                    ->label('السنة الدراسية / Year')
+                    ->label(__('filament-events.fields.academic_year'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('الحالة / Status')
+                    ->label(__('filament-events.fields.status'))
                     ->badge()
                     ->color(fn ($state): string => match ($state?->value) {
                         'pending' => 'warning',
@@ -124,19 +124,19 @@ class RegistrationsRelationManager extends RelationManager
                         default => 'primary',
                     }),
                 Tables\Columns\TextColumn::make('source')
-                    ->label('المصدر / Source'),
+                    ->label(__('filament-events.table.columns.source')),
                 Tables\Columns\TextColumn::make('attendance.scan_time')
-                    ->label('وقت التحضير / Check-In Time')
+                    ->label(__('filament-events.table.columns.checkin_time'))
                     ->dateTime(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'pending' => 'Pending',
-                        'approved' => 'Approved',
-                        'checked_in' => 'Checked In',
-                        'rejected' => 'Rejected',
-                        'cancelled' => 'Cancelled',
+                        'pending' => __('filament-events.registration_status.pending'),
+                        'approved' => __('filament-events.registration_status.approved'),
+                        'checked_in' => __('filament-events.registration_status.checked_in'),
+                        'rejected' => __('filament-events.registration_status.rejected'),
+                        'cancelled' => __('filament-events.registration_status.cancelled'),
                     ]),
             ])
             ->headerActions([
@@ -144,21 +144,21 @@ class RegistrationsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\Action::make('approve')
-                    ->label('قبول / Approve')
+                    ->label(__('filament-events.actions.approve'))
                     ->icon('heroicon-m-check')
                     ->color('success')
                     ->visible(fn (Registration $record): bool => $record->status === RegistrationStatus::PENDING)
                     ->action(fn (Registration $record) => $record->update(['status' => RegistrationStatus::APPROVED])),
 
                 Tables\Actions\Action::make('reject')
-                    ->label('رفض / Reject')
+                    ->label(__('filament-events.actions.reject'))
                     ->icon('heroicon-m-x-mark')
                     ->color('danger')
                     ->visible(fn (Registration $record): bool => $record->status === RegistrationStatus::PENDING)
                     ->action(fn (Registration $record) => $record->update(['status' => RegistrationStatus::REJECTED])),
 
                 Tables\Actions\Action::make('checkin')
-                    ->label('تحضير / Check In')
+                    ->label(__('filament-events.actions.checkin'))
                     ->icon('heroicon-m-qr-code')
                     ->color('success')
                     ->visible(fn (Registration $record): bool => $record->status === RegistrationStatus::APPROVED)

@@ -21,7 +21,17 @@ class SurveyTemplateResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'إدارة الاستبيانات / Surveys';
+        return __('filament-surveys.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament-surveys.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-surveys.plural_model_label');
     }
 
     public static function form(Form $form): Form
@@ -31,62 +41,62 @@ class SurveyTemplateResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name_ar')
-                            ->label('اسم النموذج بالعربية / Name (Arabic)')
+                            ->label(__('filament-surveys.fields.name_ar'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('name_en')
-                            ->label('اسم النموذج بالإنجليزية / Name (English)')
+                            ->label(__('filament-surveys.fields.name_en'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('version')
-                            ->label('الإصدار / Version')
+                            ->label(__('filament-surveys.fields.version'))
                             ->default('1.0')
                             ->required()
                             ->maxLength(50),
                         Forms\Components\Select::make('status')
-                            ->label('الحالة / Status')
+                            ->label(__('filament-surveys.fields.status'))
                             ->options([
-                                'draft' => 'مسودة / Draft',
-                                'active' => 'نشط / Active',
-                                'archived' => 'مؤرشف / Archived',
+                                'draft' => __('filament-surveys.status.draft'),
+                                'active' => __('filament-surveys.status.active'),
+                                'archived' => __('filament-surveys.status.archived'),
                             ])
                             ->required()
                             ->default('draft'),
                         Forms\Components\TextInput::make('category')
-                            ->label('التصنيف / Category')
+                            ->label(__('filament-surveys.fields.category'))
                             ->maxLength(255),
                         Forms\Components\Select::make('type')
-                            ->label('نوع الاستبيان / Survey Type')
+                            ->label(__('filament-surveys.fields.type'))
                             ->options([
-                                'pre' => 'استبيان قبلي (عند التسجيل) / Pre-Assessment',
-                                'post' => 'استبيان بعدي (بعد الحضور) / Post-Assessment',
+                                'pre' => __('filament-surveys.type.pre'),
+                                'post' => __('filament-surveys.type.post'),
                             ])
                             ->required()
                             ->default('pre'),
                         Forms\Components\Toggle::make('is_reusable')
-                            ->label('قابل لإعادة الاستخدام / Reusable')
+                            ->label(__('filament-surveys.fields.is_reusable'))
                             ->default(true),
                         Forms\Components\Textarea::make('description_ar')
-                            ->label('الوصف بالعربية / Description (Arabic)')
+                            ->label(__('filament-surveys.fields.description_ar'))
                             ->rows(2),
                         Forms\Components\Textarea::make('description_en')
-                            ->label('الوصف بالإنجليزية / Description (English)')
+                            ->label(__('filament-surveys.fields.description_en'))
                             ->rows(2),
                     ])->columns(2),
 
-                Forms\Components\Section::make('أسئلة الاستبيان / Survey Questions')
-                    ->description('أضف أسئلتك واحدًا تلو الآخر. اسحب من المقبض 🟰 لإعادة الترتيب. / Add your questions one at a time. Drag to reorder.')
+                Forms\Components\Section::make(__('filament-surveys.sections.questions_heading'))
+                    ->description(__('filament-surveys.sections.questions_description'))
                     ->schema([
                         Forms\Components\Repeater::make('questions')
                             ->label('')
                             ->relationship('questions')
                             ->schema([
                                 Forms\Components\Select::make('type')
-                                    ->label('نوع السؤال / Question Type')
-                                    ->helperText('اختر شكل الإجابة التي تريدها من الطالب. / Choose how the student will answer.')
+                                    ->label(__('filament-surveys.question_fields.type'))
+                                    ->helperText(__('filament-surveys.question_fields.type_helper'))
                                     ->options(
                                         collect(QuestionType::cases())->mapWithKeys(
-                                            fn (QuestionType $type) => [$type->value => self::questionTypeIcon($type) . ' ' . $type->labelAr()]
+                                            fn (QuestionType $type) => [$type->value => self::questionTypeIcon($type) . ' ' . (app()->getLocale() === 'ar' ? $type->labelAr() : $type->labelEn())]
                                         )
                                     )
                                     ->native(false)
@@ -97,40 +107,40 @@ class SurveyTemplateResource extends Resource
                                 Forms\Components\Grid::make(2)
                                     ->schema([
                                         Forms\Components\TextInput::make('question_text_ar')
-                                            ->label('عنوان السؤال بالعربية / Question (Arabic)')
+                                            ->label(__('filament-surveys.question_fields.question_text_ar'))
                                             ->placeholder('مثال: ما مدى رضاك عن الفعالية؟')
                                             ->required()
                                             ->live(onBlur: true)
                                             ->maxLength(255),
                                         Forms\Components\TextInput::make('question_text_en')
-                                            ->label('عنوان السؤال بالإنجليزية / Question (English)')
+                                            ->label(__('filament-surveys.question_fields.question_text_en'))
                                             ->placeholder('e.g. How satisfied were you with the event?')
                                             ->required()
                                             ->maxLength(255),
                                     ]),
 
                                 Forms\Components\Repeater::make('options')
-                                    ->label('خيارات الإجابة / Answer Options')
-                                    ->helperText('أضف كل خيار في سطر منفصل، بنفس الترتيب الذي سيراه الطالب. / Add each choice on its own line, in the order students will see them.')
+                                    ->label(__('filament-surveys.question_fields.options'))
+                                    ->helperText(__('filament-surveys.question_fields.options_helper'))
                                     ->simple(
                                         Forms\Components\TextInput::make('value')
-                                            ->label('الخيار / Option')
+                                            ->label(__('filament-surveys.question_fields.option_value'))
                                             ->required()
                                             ->maxLength(255)
                                     )
-                                    ->addActionLabel('+ إضافة خيار / Add option')
+                                    ->addActionLabel(__('filament-surveys.actions.add_option'))
                                     ->reorderable()
                                     ->defaultItems(2)
                                     ->visible(fn (callable $get) => in_array($get('type'), ['multiple_choice', 'checkbox']))
                                     ->columnSpanFull(),
 
                                 Forms\Components\Toggle::make('is_required')
-                                    ->label('سؤال إجباري؟ / Required question?')
-                                    ->helperText('لن يتمكن الطالب من إرسال الاستبيان دون الإجابة على هذا السؤال. / Student cannot submit the survey without answering this.')
+                                    ->label(__('filament-surveys.question_fields.is_required'))
+                                    ->helperText(__('filament-surveys.question_fields.is_required_helper'))
                                     ->default(true)
                                     ->columnSpanFull(),
 
-                                Forms\Components\Section::make('تفاصيل إضافية (اختياري) / Additional details (optional)')
+                                Forms\Components\Section::make(__('filament-surveys.sections.additional_details'))
                                     ->collapsible()
                                     ->collapsed()
                                     ->columnSpanFull()
@@ -138,24 +148,24 @@ class SurveyTemplateResource extends Resource
                                         Forms\Components\Grid::make(2)
                                             ->schema([
                                                 Forms\Components\Textarea::make('description_ar')
-                                                    ->label('وصف/توضيح بالعربية / Description (Arabic)')
+                                                    ->label(__('filament-surveys.question_fields.description_ar'))
                                                     ->helperText('نص إضافي يظهر تحت عنوان السؤال لتوضيحه للطالب.')
                                                     ->rows(2),
                                                 Forms\Components\Textarea::make('description_en')
-                                                    ->label('وصف/توضيح بالإنجليزية / Description (English)')
+                                                    ->label(__('filament-surveys.question_fields.description_en'))
                                                     ->rows(2),
                                             ]),
                                         Forms\Components\Grid::make(2)
                                             ->schema([
                                                 Forms\Components\TextInput::make('help_text_ar')
-                                                    ->label('نص مساعد بالعربية / Help text (Arabic)')
+                                                    ->label(__('filament-surveys.question_fields.help_text_ar'))
                                                     ->maxLength(255),
                                                 Forms\Components\TextInput::make('help_text_en')
-                                                    ->label('نص مساعد بالإنجليزية / Help text (English)')
+                                                    ->label(__('filament-surveys.question_fields.help_text_en'))
                                                     ->maxLength(255),
                                             ]),
                                         Forms\Components\TextInput::make('score')
-                                            ->label('الدرجة / Score')
+                                            ->label(__('filament-surveys.question_fields.score'))
                                             ->helperText('تُستخدم فقط إذا كان هذا الاستبيان لأغراض التقييم/التصحيح.')
                                             ->numeric()
                                             ->default(0),
@@ -169,11 +179,11 @@ class SurveyTemplateResource extends Resource
                             ->deleteAction(
                                 fn (Forms\Components\Actions\Action $action) => $action
                                     ->requiresConfirmation()
-                                    ->modalHeading('حذف هذا السؤال؟ / Delete this question?')
-                                    ->modalDescription('سيتم حذف السؤال وكل إجابات الطلاب عليه نهائيًا، ولا يمكن التراجع عن هذا الإجراء. / This permanently deletes the question and any student answers to it. This cannot be undone.')
-                                    ->modalSubmitActionLabel('نعم، احذف / Yes, delete')
+                                    ->modalHeading(__('filament-surveys.actions.delete_question_heading'))
+                                    ->modalDescription(__('filament-surveys.actions.delete_question_description'))
+                                    ->modalSubmitActionLabel(__('filament-surveys.actions.delete_question_confirm'))
                             )
-                            ->addActionLabel('+ إضافة سؤال جديد / Add new question')
+                            ->addActionLabel(__('filament-surveys.actions.add_question'))
                             ->defaultItems(1)
                             ->columns(1)
                             ->columnSpanFull(),
@@ -212,7 +222,7 @@ class SurveyTemplateResource extends Resource
 
         return $title !== ''
             ? "{$icon} {$title}{$required}"
-            : "{$icon} سؤال جديد / New question";
+            : "{$icon} " . __('filament-surveys.question_fields.new_question_label');
     }
 
     public static function table(Table $table): Table
@@ -220,14 +230,14 @@ class SurveyTemplateResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name_ar')
-                    ->label('اسم الاستبيان / Survey Name')
+                    ->label(__('filament-surveys.table.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('version')
-                    ->label('الإصدار / Version')
+                    ->label(__('filament-surveys.fields.version'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->label('نوع الاستبيان / Type')
+                    ->label(__('filament-surveys.table.type'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'pre' => 'info',
@@ -235,12 +245,12 @@ class SurveyTemplateResource extends Resource
                         default => 'primary',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pre' => 'استبيان قبلي / Pre-Assessment',
-                        'post' => 'استبيان بعدي / Post-Assessment',
+                        'pre' => __('filament-surveys.table.type_pre'),
+                        'post' => __('filament-surveys.table.type_post'),
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('الحالة / Status')
+                    ->label(__('filament-surveys.fields.status'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -249,20 +259,20 @@ class SurveyTemplateResource extends Resource
                         default => 'primary',
                     }),
                 Tables\Columns\ToggleColumn::make('is_reusable')
-                    ->label('قابل لإعادة الاستخدام / Reusable'),
+                    ->label(__('filament-surveys.fields.is_reusable')),
                 Tables\Columns\TextColumn::make('questions_count')
                     ->counts('questions')
                     ->label('عدد الأسئلة'),
             ])
             ->actions([
                 Tables\Actions\Action::make('preview')
-                    ->label('معاينة / Preview')
+                    ->label(__('filament-surveys.actions.preview'))
                     ->icon('heroicon-o-eye')
                     ->color('gray')
                     ->url(fn (SurveyTemplate $record) => static::getUrl('preview', ['record' => $record])),
 
                 Tables\Actions\Action::make('clone')
-                    ->label('نسخ / Clone')
+                    ->label(__('filament-surveys.actions.clone'))
                     ->icon('heroicon-o-document-duplicate')
                     ->color('warning')
                     ->action(fn (SurveyTemplate $record) => app(SurveyTemplateService::class)->cloneTemplate($record->id)),

@@ -16,7 +16,7 @@ class EditEvent extends EditRecord
     {
         return [
             Actions\Action::make('scan')
-                ->label('مسح التذاكر / Scan QR')
+                ->label(__('filament-events.actions.scan_qr'))
                 ->icon('heroicon-m-qr-code')
                 ->color('warning')
                 ->url(fn (): string => static::getResource()::getUrl('scan', ['record' => $this->getRecord()])),

@@ -18,7 +18,7 @@ class EvaluationsRelationManager extends RelationManager
 
     public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
     {
-        return 'التقييمات والاستبيانات المربوطة / Linked Surveys';
+        return __('filament-events.relation_managers.evaluations.title');
     }
 
     public function form(Form $form): Form
@@ -26,20 +26,20 @@ class EvaluationsRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('survey_template_id')
-                    ->label('نموذج الاستبيان / Survey Template')
+                    ->label(__('filament-events.fields.survey_template'))
                     ->relationship('template', 'name_ar')
                     ->searchable()
                     ->preload()
                     ->required(),
                 Forms\Components\Select::make('evaluation_type')
-                    ->label('نوع الاستبيان / Survey Type')
+                    ->label(__('filament-events.fields.evaluation_type'))
                     ->options([
-                        'pre' => 'استبيان قبلي (عند التسجيل) / Pre-Assessment',
-                        'post' => 'استبيان بعدي (بعد الحضور) / Post-Assessment',
+                        'pre' => __('filament-events.evaluation_type_options.pre'),
+                        'post' => __('filament-events.evaluation_type_options.post'),
                     ])
                     ->required(),
                 Forms\Components\Toggle::make('is_active')
-                    ->label('نشط / Active')
+                    ->label(__('filament-events.fields.is_active'))
                     ->default(true),
             ]);
     }
@@ -50,11 +50,11 @@ class EvaluationsRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->columns([
                 Tables\Columns\TextColumn::make('template.name_ar')
-                    ->label('نموذج الاستبيان / Survey Template')
+                    ->label(__('filament-events.fields.survey_template'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('evaluation_type')
-                    ->label('نوع الاستبيان / Survey Type')
+                    ->label(__('filament-events.fields.evaluation_type'))
                     ->badge()
                     ->color(fn (EvaluationType $state): string => match ($state->value) {
                         'pre' => 'info',
@@ -62,29 +62,29 @@ class EvaluationsRelationManager extends RelationManager
                         default => 'primary',
                     })
                     ->formatStateUsing(fn (EvaluationType $state): string => match ($state->value) {
-                        'pre' => 'استبيان قبلي / Pre-Assessment',
-                        'post' => 'استبيان بعدي / Post-Assessment',
+                        'pre' => __('filament-events.evaluation_type_badge.pre'),
+                        'post' => __('filament-events.evaluation_type_badge.post'),
                         default => $state->name,
                     }),
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->label('نشط / Active'),
+                    ->label(__('filament-events.fields.is_active')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('evaluation_type')
-                    ->label('نوع الاستبيان')
+                    ->label(__('filament-events.fields.evaluation_type'))
                     ->options([
-                        'pre' => 'استبيان قبلي / Pre-Assessment',
-                        'post' => 'استبيان بعدي / Post-Assessment',
+                        'pre' => __('filament-events.evaluation_type_badge.pre'),
+                        'post' => __('filament-events.evaluation_type_badge.post'),
                     ]),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->label('ربط استبيان جديد / Link Survey'),
+                    ->label(__('filament-events.actions.link_survey')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->label('إلغاء الربط / Unlink'),
+                    ->label(__('filament-events.actions.unlink')),
             ]);
     }
 }

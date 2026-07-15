@@ -26,16 +26,16 @@ class PreviewSurveyTemplate extends Page
 
     public function getTitle(): string
     {
-        return 'معاينة الاستبيان / Survey Preview';
+        return __('filament-surveys.preview.title');
     }
 
     public function getHeading(): string
     {
-        return 'معاينة الاستبيان / Survey Preview';
+        return __('filament-surveys.preview.title');
     }
 
     public function getSubheading(): ?string
     {
-        return 'هكذا سيظهر الاستبيان للطالب. هذه معاينة فقط ولا يمكن إرسال إجابات منها. / This is how the survey will look to a student. Preview only — answers cannot be submitted here.';
+        return __('filament-surveys.preview.subheading');
     }
 }

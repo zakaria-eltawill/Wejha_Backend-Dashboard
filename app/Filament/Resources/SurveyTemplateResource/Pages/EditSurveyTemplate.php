@@ -16,7 +16,7 @@ class EditSurveyTemplate extends EditRecord
     {
         return [
             Actions\Action::make('preview')
-                ->label('معاينة الاستبيان / Preview')
+                ->label(__('filament-surveys.actions.preview_survey'))
                 ->icon('heroicon-o-eye')
                 ->color('gray')
                 ->url(fn () => SurveyTemplateResource::getUrl('preview', ['record' => $this->record])),

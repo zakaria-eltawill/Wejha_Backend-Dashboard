@@ -17,7 +17,7 @@ class Settings extends Page
 
     public static function getNavigationLabel(): string
     {
-        return 'إعدادات النظام / Settings';
+        return __('filament-pages.settings.navigation_label');
     }
 
     public static function canAccess(): bool
@@ -27,7 +27,7 @@ class Settings extends Page
 
     public function getHeading(): string
     {
-        return 'إعدادات النظام / System Settings';
+        return __('filament-pages.settings.heading');
     }
 
     public ?array $data = [];
@@ -52,45 +52,45 @@ class Settings extends Page
             ->schema([
                 Forms\Components\Tabs::make('Settings')
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make('إعدادات عامة / General')
+                        Forms\Components\Tabs\Tab::make(__('filament-pages.settings.tabs.general'))
                             ->schema([
                                 Forms\Components\TextInput::make('site_name_ar')
-                                    ->label('اسم الموقع بالعربية / Site Name (Arabic)')
+                                    ->label(__('filament-pages.settings.fields.site_name_ar'))
                                     ->required(),
                                 Forms\Components\TextInput::make('site_name_en')
-                                    ->label('اسم الموقع بالإنجليزية / Site Name (English)')
+                                    ->label(__('filament-pages.settings.fields.site_name_en'))
                                     ->required(),
                                 Forms\Components\Select::make('default_language')
-                                    ->label('اللغة الافتراضية / Default Language')
+                                    ->label(__('filament-pages.settings.fields.default_language'))
                                     ->options([
-                                        'ar' => 'العربية / Arabic',
-                                        'en' => 'الإنجليزية / English',
+                                        'ar' => __('filament-pages.settings.fields.default_language_options.ar'),
+                                        'en' => __('filament-pages.settings.fields.default_language_options.en'),
                                     ])
                                     ->required(),
                                 Forms\Components\Select::make('timezone')
-                                    ->label('المنطقة الزمنية / Timezone')
+                                    ->label(__('filament-pages.settings.fields.timezone'))
                                     ->options([
                                         'Africa/Tripoli' => 'توقيت طرابلس (Africa/Tripoli)',
                                         'UTC' => 'التوقيت العالمي (UTC)',
                                     ])
                                     ->required(),
                                 Forms\Components\Toggle::make('allow_registration')
-                                    ->label('السماح بالتسجيل الجديد / Allow Registration')
+                                    ->label(__('filament-pages.settings.fields.allow_registration'))
                                     ->default(true),
                             ])->columns(2),
 
-                        Forms\Components\Tabs\Tab::make('إعدادات البريد / Mail (SMTP)')
+                        Forms\Components\Tabs\Tab::make(__('filament-pages.settings.tabs.mail'))
                             ->schema([
                                 Forms\Components\TextInput::make('smtp_host')
-                                    ->label('مضيف SMTP / SMTP Host')
+                                    ->label(__('filament-pages.settings.fields.smtp_host'))
                                     ->required(),
                                 Forms\Components\TextInput::make('smtp_port')
-                                    ->label('منفذ SMTP / SMTP Port')
+                                    ->label(__('filament-pages.settings.fields.smtp_port'))
                                     ->required(),
                                 Forms\Components\TextInput::make('smtp_username')
-                                    ->label('اسم مستخدم SMTP / SMTP Username'),
+                                    ->label(__('filament-pages.settings.fields.smtp_username')),
                                 Forms\Components\TextInput::make('smtp_password')
-                                    ->label('كلمة مرور SMTP / SMTP Password')
+                                    ->label(__('filament-pages.settings.fields.smtp_password'))
                                     ->password(),
                             ])->columns(2),
                     ])
@@ -101,7 +101,7 @@ class Settings extends Page
     public function save(): void
     {
         Notification::make()
-            ->title('تم حفظ الإعدادات بنجاح / Settings saved successfully.')
+            ->title(__('filament-pages.settings.save_success'))
             ->success()
             ->send();
     }

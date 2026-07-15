@@ -18,7 +18,7 @@ class ListSurveyTemplates extends ListRecords
     {
         return [
             Actions\Action::make('import')
-                ->label('استيراد نموذج / Import JSON')
+                ->label(__('filament-surveys.actions.import'))
                 ->icon('heroicon-o-arrow-up-tray')
                 ->color('info')
                 ->form([

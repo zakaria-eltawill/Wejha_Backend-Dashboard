@@ -15,7 +15,7 @@
 
         @if($record->questions->isEmpty())
             <div style="text-align: center; padding: 48px 20px; color: #9ca3af; background: #ffffff; border: 1px dashed #d1d5db; border-radius: 12px;">
-                لا توجد أسئلة بعد. أضف أسئلة من صفحة التعديل لتظهر هنا. / No questions yet. Add questions from the edit page to see them here.
+                {{ __('filament-surveys.preview.no_questions') }}
             </div>
         @endif
 
@@ -44,12 +44,12 @@
                         @case('email')
                         @case('phone')
                         @case('number')
-                            <input type="text" disabled placeholder="{{ $question->help_text_ar ?? 'إجابة الطالب هنا / Student answer here' }}"
+                            <input type="text" disabled placeholder="{{ $question->help_text_ar ?? __('filament-surveys.preview.answer_placeholder') }}"
                                 style="width: 100%; max-width: 420px; border: none; border-bottom: 1px solid #D1D5DB; padding: 6px 2px; background: transparent; color: #6b7280; font-size: 0.9rem;">
                             @break
 
                         @case('textarea')
-                            <textarea disabled rows="2" placeholder="{{ $question->help_text_ar ?? 'إجابة الطالب هنا / Student answer here' }}"
+                            <textarea disabled rows="2" placeholder="{{ $question->help_text_ar ?? __('filament-surveys.preview.answer_placeholder') }}"
                                 style="width: 100%; border: 1px solid #D1D5DB; border-radius: 6px; padding: 8px 10px; background: #F9FAFC; color: #6b7280; font-size: 0.9rem; resize: none;"></textarea>
                             @break
 
@@ -70,7 +70,7 @@
                                         <span>{{ is_array($option) ? ($option['value'] ?? '') : $option }}</span>
                                     </label>
                                 @empty
-                                    <span style="color: #DC2626; font-size: 0.85rem;">⚠ لم تُضف أي خيارات بعد / No options added yet</span>
+                                    <span style="color: #DC2626; font-size: 0.85rem;">{{ __('filament-surveys.preview.no_options') }}</span>
                                 @endforelse
                             </div>
                             @break
@@ -83,7 +83,7 @@
                                         <span>{{ is_array($option) ? ($option['value'] ?? '') : $option }}</span>
                                     </label>
                                 @empty
-                                    <span style="color: #DC2626; font-size: 0.85rem;">⚠ لم تُضف أي خيارات بعد / No options added yet</span>
+                                    <span style="color: #DC2626; font-size: 0.85rem;">{{ __('filament-surveys.preview.no_options') }}</span>
                                 @endforelse
                             </div>
                             @break

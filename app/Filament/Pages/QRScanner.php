@@ -14,11 +14,11 @@ class QRScanner extends Page
 
     public static function getNavigationLabel(): string
     {
-        return 'ماسح التذاكر السريع / QR Scanner';
+        return __('filament-pages.qr_scanner.navigation_label');
     }
 
     public function getHeading(): string
     {
-        return 'ماسح التذاكر السريع / Real-time QR Ticket Scanner';
+        return __('filament-pages.qr_scanner.heading');
     }
 }

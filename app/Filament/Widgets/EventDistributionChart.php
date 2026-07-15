@@ -10,8 +10,12 @@ use Filament\Widgets\ChartWidget;
 class EventDistributionChart extends ChartWidget
 {
     protected static ?int $sort = 6;
-    protected static ?string $heading = 'توزيع الفعاليات / Event Distribution';
     protected static ?string $maxHeight = '250px';
+
+    public function getHeading(): string | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return __('filament-widgets.event_distribution.heading');
+    }
 
     protected function getData(): array
     {
@@ -24,9 +28,9 @@ class EventDistributionChart extends ChartWidget
 
         foreach ($dist as $type => $count) {
             $labels[] = match ($type) {
-                'seminar' => 'ندوة / Seminar',
-                'workshop' => 'ورشة عمل / Workshop',
-                'exhibition' => 'معرض / Exhibition',
+                'seminar' => __('filament-widgets.event_distribution.seminar'),
+                'workshop' => __('filament-widgets.event_distribution.workshop'),
+                'exhibition' => __('filament-widgets.event_distribution.exhibition'),
                 default => $type
             };
             $translatedData[] = $count;
@@ -36,7 +40,7 @@ class EventDistributionChart extends ChartWidget
             'labels' => $labels,
             'datasets' => [
                 [
-                    'label' => 'توزيع الفعاليات',
+                    'label' => __('filament-widgets.event_distribution.dataset_label'),
                     'data' => $translatedData,
                     'backgroundColor' => array_slice($colors, 0, count($labels)),
                 ]

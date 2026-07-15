@@ -25,11 +25,11 @@ class ScanEvent extends Page
 
     public function getTitle(): string
     {
-        return "ماسح التذاكر الفوري: " . ($this->record->title_ar ?? $this->record->title_en);
+        return __('filament-events.pages.scan.heading_prefix') . ($this->record->title_ar ?? $this->record->title_en);
     }
 
     public function getHeading(): string
     {
-        return "ماسح التذاكر الفوري: " . ($this->record->title_ar ?? $this->record->title_en);
+        return __('filament-events.pages.scan.heading_prefix') . ($this->record->title_ar ?? $this->record->title_en);
     }
 }

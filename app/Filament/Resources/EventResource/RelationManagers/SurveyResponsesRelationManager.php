@@ -17,7 +17,7 @@ class SurveyResponsesRelationManager extends RelationManager
 
     public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
     {
-        return 'إجابات الطلاب على الاستبيانات / Student Survey Answers';
+        return __('filament-events.relation_managers.survey_responses.title');
     }
 
     public function form(Form $form): Form
@@ -25,20 +25,20 @@ class SurveyResponsesRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\TextInput::make('user.name')
-                    ->label('اسم الطالب / Student Name')
+                    ->label(__('filament-events.fields.student_name'))
                     ->disabled(),
                 Forms\Components\TextInput::make('eventEvaluation.template.name_ar')
-                    ->label('نموذج الاستبيان / Template')
+                    ->label(__('filament-events.fields.template'))
                     ->disabled(),
                 Forms\Components\TextInput::make('question.question_text_ar')
-                    ->label('السؤال / Question')
+                    ->label(__('filament-events.fields.question'))
                     ->disabled(),
                 Forms\Components\Textarea::make('response_text')
-                    ->label('الإجابة / Answer')
+                    ->label(__('filament-events.fields.answer'))
                     ->disabled()
                     ->rows(3),
                 Forms\Components\DateTimePicker::make('submitted_at')
-                    ->label('تاريخ الإرسال / Submitted At')
+                    ->label(__('filament-events.fields.submitted_at'))
                     ->disabled(),
             ]);
     }
@@ -49,14 +49,14 @@ class SurveyResponsesRelationManager extends RelationManager
             ->recordTitleAttribute('response_text')
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('اسم المشارك / Participant')
+                    ->label(__('filament-events.table.columns.participant'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('eventEvaluation.template.name_ar')
-                    ->label('الاستبيان / Survey')
+                    ->label(__('filament-events.table.columns.survey'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('eventEvaluation.evaluation_type')
-                    ->label('النوع / Type')
+                    ->label(__('filament-events.table.columns.type'))
                     ->badge()
                     ->color(fn ($state): string => match ($state?->value) {
                         'pre' => 'info',
@@ -64,35 +64,35 @@ class SurveyResponsesRelationManager extends RelationManager
                         default => 'primary',
                     })
                     ->formatStateUsing(fn ($state): string => match ($state?->value) {
-                        'pre' => 'قبلي / Pre',
-                        'post' => 'بعدي / Post',
+                        'pre' => __('filament-events.evaluation_badge_short.pre'),
+                        'post' => __('filament-events.evaluation_badge_short.post'),
                         default => '',
                     }),
                 Tables\Columns\TextColumn::make('question.question_text_ar')
-                    ->label('السؤال / Question')
+                    ->label(__('filament-events.fields.question'))
                     ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('response_text')
-                    ->label('الإجابة / Answer')
+                    ->label(__('filament-events.fields.answer'))
                     ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('submitted_at')
-                    ->label('تاريخ الإرسال / Submitted At')
+                    ->label(__('filament-events.fields.submitted_at'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->defaultSort('submitted_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('eventEvaluation.evaluation_type')
-                    ->label('نوع الاستبيان')
+                    ->label(__('filament-events.fields.evaluation_type'))
                     ->options([
-                        'pre' => 'قبلي / Pre-Assessment',
-                        'post' => 'بعدي / Post-Assessment',
+                        'pre' => __('filament-events.filter_evaluation_type.pre'),
+                        'post' => __('filament-events.filter_evaluation_type.post'),
                     ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->label('عرض التفاصيل / View'),
+                    ->label(__('filament-events.actions.view_details')),
             ]);
     }
 }

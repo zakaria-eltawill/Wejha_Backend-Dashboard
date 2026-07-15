@@ -10,8 +10,12 @@ use Filament\Widgets\ChartWidget;
 class SurveyRatingsChart extends ChartWidget
 {
     protected static ?int $sort = 5;
-    protected static ?string $heading = 'تقييمات الاستبيانات / Survey Ratings';
     protected static ?string $maxHeight = '250px';
+
+    public function getHeading(): string | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return __('filament-widgets.survey_ratings.heading');
+    }
 
     protected function getData(): array
     {
@@ -21,7 +25,7 @@ class SurveyRatingsChart extends ChartWidget
             'labels' => array_keys($trends),
             'datasets' => [
                 [
-                    'label' => 'متوسط التقييم اليومي',
+                    'label' => __('filament-widgets.survey_ratings.dataset_label'),
                     'data' => array_map('floatval', array_values($trends)),
                     'borderColor' => '#FF4900',
                     'backgroundColor' => 'rgba(255, 73, 0, 0.1)',

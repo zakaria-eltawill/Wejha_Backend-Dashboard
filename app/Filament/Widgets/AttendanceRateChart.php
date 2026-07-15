@@ -10,8 +10,12 @@ use Filament\Widgets\ChartWidget;
 class AttendanceRateChart extends ChartWidget
 {
     protected static ?int $sort = 2;
-    protected static ?string $heading = 'معدل الحضور / Attendance Rate';
     protected static ?string $maxHeight = '250px';
+
+    public function getHeading(): string | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return __('filament-widgets.attendance_rate.heading');
+    }
 
     protected function getData(): array
     {

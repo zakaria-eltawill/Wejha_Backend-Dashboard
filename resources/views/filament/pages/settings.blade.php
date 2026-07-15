@@ -4,7 +4,7 @@
 
         <div class="flex justify-end">
             <x-filament::button type="submit" size="md">
-                حفظ التغييرات / Save Changes
+                {{ __('filament-pages.settings.save_changes_button') }}
             </x-filament::button>
         </div>
     </form>

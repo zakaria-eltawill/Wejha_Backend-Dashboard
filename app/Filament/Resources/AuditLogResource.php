@@ -20,7 +20,17 @@ class AuditLogResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'سجلات المراجعة والأمان / Audit Logs';
+        return __('filament-notifications-audit.audit_log.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament-notifications-audit.audit_log.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-notifications-audit.audit_log.plural_model_label');
     }
 
     public static function form(Form $form): Form
@@ -30,31 +40,31 @@ class AuditLogResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('user.name')
-                            ->label('اسم المستخدم / User Name')
+                            ->label(__('filament-notifications-audit.audit_log.fields.user_name'))
                             ->disabled(),
                         Forms\Components\TextInput::make('action')
-                            ->label('العملية / Action')
+                            ->label(__('filament-notifications-audit.audit_log.fields.action'))
                             ->disabled(),
                         Forms\Components\TextInput::make('entity')
-                            ->label('الكيان / Entity')
+                            ->label(__('filament-notifications-audit.audit_log.fields.entity'))
                             ->disabled(),
                         Forms\Components\TextInput::make('entity_id')
-                            ->label('معرّف الكيان / Entity ID')
+                            ->label(__('filament-notifications-audit.audit_log.fields.entity_id'))
                             ->disabled(),
                         Forms\Components\TextInput::make('ip_address')
-                            ->label('عنوان IP / IP Address')
+                            ->label(__('filament-notifications-audit.audit_log.fields.ip_address'))
                             ->disabled(),
                         Forms\Components\TextInput::make('user_agent')
-                            ->label('متصفح المستخدم / User Agent')
+                            ->label(__('filament-notifications-audit.audit_log.fields.user_agent'))
                             ->disabled(),
                         Forms\Components\KeyValue::make('old_values')
-                            ->label('القيم السابقة / Old Values')
+                            ->label(__('filament-notifications-audit.audit_log.fields.old_values'))
                             ->disabled(),
                         Forms\Components\KeyValue::make('new_values')
-                            ->label('القيم الجديدة / New Values')
+                            ->label(__('filament-notifications-audit.audit_log.fields.new_values'))
                             ->disabled(),
                         Forms\Components\DateTimePicker::make('created_at')
-                            ->label('تاريخ العملية / Timestamp')
+                            ->label(__('filament-notifications-audit.audit_log.fields.created_at'))
                             ->disabled(),
                     ])->columns(2)
             ]);
@@ -65,30 +75,30 @@ class AuditLogResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('المستخدم / User')
+                    ->label(__('filament-notifications-audit.audit_log.table.user'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('action')
-                    ->label('العملية / Action')
+                    ->label(__('filament-notifications-audit.audit_log.table.action'))
                     ->badge()
                     ->color('primary')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('entity')
-                    ->label('الجدول / Entity')
+                    ->label(__('filament-notifications-audit.audit_log.table.entity'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ip_address')
-                    ->label('IP Address'),
+                    ->label(__('filament-notifications-audit.audit_log.table.ip_address')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('الوقت / Logged At')
+                    ->label(__('filament-notifications-audit.audit_log.table.created_at'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('action')
                     ->options([
-                        'create' => 'إنشاء / Create',
-                        'update' => 'تحديث / Update',
-                        'delete' => 'حذف / Delete',
+                        'create' => __('filament-notifications-audit.audit_log.action_type.create'),
+                        'update' => __('filament-notifications-audit.audit_log.action_type.update'),
+                        'delete' => __('filament-notifications-audit.audit_log.action_type.delete'),
                     ]),
             ])
             ->actions([

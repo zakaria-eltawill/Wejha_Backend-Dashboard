@@ -43,7 +43,7 @@ class Login extends BaseAuth
     protected function getUsernameFormComponent(): Component
     {
         return TextInput::make('username')
-            ->label('اسم المستخدم / Username')
+            ->label(__('filament-pages.login.username_label'))
             ->required()
             ->autocomplete()
             ->autofocus()

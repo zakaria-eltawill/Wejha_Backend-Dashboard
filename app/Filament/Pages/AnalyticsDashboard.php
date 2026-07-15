@@ -25,12 +25,12 @@ class AnalyticsDashboard extends Page
 
     public static function getNavigationLabel(): string
     {
-        return 'التقارير / Reports';
+        return __('filament-pages.analytics_dashboard.navigation_label');
     }
 
     public function getHeading(): string
     {
-        return 'مركز التقارير والتحليلات / Reports & Analytics Hub';
+        return __('filament-pages.analytics_dashboard.heading');
     }
 
     public function mount(): void

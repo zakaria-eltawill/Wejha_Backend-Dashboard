@@ -99,9 +99,9 @@
             <div class="flex items-center gap-3 w-full justify-between border-b border-gray-100 dark:border-gray-800 pb-4 mb-6">
                 <div class="flex items-center gap-2">
                     <div id="scanner-indicator" class="w-2.5 h-2.5 rounded-full bg-gray-400"></div>
-                    <h3 class="text-base font-bold text-gray-800 dark:text-gray-200">كاميرا مسح التذاكر / Active Scanner</h3>
+                    <h3 class="text-base font-bold text-gray-800 dark:text-gray-200">{{ __('filament-events.pages.scan_page.active_scanner') }}</h3>
                 </div>
-                <span class="text-xs text-gray-400">التحضير للفعالية المحددة</span>
+                <span class="text-xs text-gray-400">{{ __('filament-events.pages.scan_page.ready_for_event') }}</span>
             </div>
 
             <!-- Viewport HUD Container -->
@@ -125,11 +125,11 @@
                 <!-- Camera Select Dropdown -->
                 <div>
                     <label for="camera-select" class="block text-xs font-bold text-gray-500 mb-1.5 dark:text-gray-400">
-                        اختر الكاميرا المفضلة / Select Camera Source
+                        {{ __('filament-events.pages.scan_page.select_camera') }}
                     </label>
                     <div class="relative rounded-xl shadow-sm">
                         <select id="camera-select" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-300 focus:ring-primary-500 focus:border-primary-500">
-                            <option value="">جاري تحميل الكاميرات... / Loading cameras...</option>
+                            <option value="">{{ __('filament-events.pages.scan_page.loading_cameras') }}</option>
                         </select>
                     </div>
                 </div>
@@ -138,26 +138,26 @@
                 <div class="grid grid-cols-2 gap-4">
                     <button id="start-btn" class="bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-indigo-950 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        تشغيل الكاميرا / Start
+                        {{ __('filament-events.pages.scan_page.start') }}
                     </button>
                     <button id="stop-btn" class="bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 dark:from-gray-800 dark:to-gray-700 dark:hover:from-gray-700 dark:hover:to-gray-600 text-gray-700 dark:text-gray-200 font-bold py-3 px-6 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                        إيقاف الكاميرا / Stop
+                        {{ __('filament-events.pages.scan_page.stop') }}
                     </button>
                 </div>
 
                 <!-- Divider -->
                 <div class="relative flex py-2 items-center">
                     <div class="flex-grow border-t border-gray-100 dark:border-gray-800"></div>
-                    <span class="flex-shrink mx-4 text-gray-400 text-xs">أو التحقق اليدوي / Manual Entry</span>
+                    <span class="flex-shrink mx-4 text-gray-400 text-xs">{{ __('filament-events.pages.scan_page.manual_entry_divider') }}</span>
                     <div class="flex-grow border-t border-gray-100 dark:border-gray-800"></div>
                 </div>
 
                 <!-- Manual Input Bar -->
                 <div class="flex gap-2">
-                    <input type="text" id="manual-hash-input" placeholder="أدخل رمز التذكرة اليدوي..." class="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-300 focus:ring-primary-500 focus:border-primary-500">
+                    <input type="text" id="manual-hash-input" placeholder="{{ __('filament-events.pages.scan_page.manual_input_placeholder') }}" class="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-300 focus:ring-primary-500 focus:border-primary-500">
                     <button id="manual-submit-btn" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all shadow-sm">
-                        تحقق / Verify
+                        {{ __('filament-events.pages.scan_page.verify') }}
                     </button>
                 </div>
 
@@ -168,7 +168,7 @@
         <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm min-h-[460px] flex flex-col justify-between">
             <div>
                 <h3 class="text-base font-bold text-gray-800 dark:text-gray-200 border-b border-gray-100 dark:border-gray-800 pb-4 mb-6">
-                    حالة البطاقة والمسح / Validation Details
+                    {{ __('filament-events.pages.scan_page.validation_details') }}
                 </h3>
 
                 <!-- Idle/Waiting state -->
@@ -176,9 +176,9 @@
                     <div class="radar-sweep mb-6">
                         <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m0 11v.01M5.93 5.93l.71.71M18.07 18.07l.71.71M4 12h1m14 0h1M5.93 18.07l.71-.71M18.07 5.93l.71-.71M12 7a5 5 0 110 10 5 5 0 010-10z"></path></svg>
                     </div>
-                    <div id="status-title" class="text-sm font-bold text-gray-700 dark:text-gray-300">في انتظار البطاقة...</div>
+                    <div id="status-title" class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ __('filament-events.pages.scan_page.idle_title') }}</div>
                     <div id="status-message" class="text-xs text-gray-400 text-center px-6 mt-2 leading-relaxed">
-                        يرجى تقريب رمز الـ QR من عدسة الكاميرا أو إدخال كود التذكرة يدوياً
+                        {{ __('filament-events.pages.scan_page.idle_message') }}
                     </div>
                 </div>
 
@@ -188,7 +188,7 @@
                         <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg check-anim">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <span class="font-bold text-sm">تم تأكيد حضور الطالب / Check-in OK</span>
+                        <span class="font-bold text-sm">{{ __('filament-events.pages.scan_page.check_in_ok') }}</span>
                     </div>
 
                     <!-- Attendee avatar circle and details -->
@@ -201,11 +201,11 @@
 
                     <div class="space-y-3 text-xs border-t border-emerald-100 dark:border-emerald-900/30 pt-4">
                         <div class="flex justify-between">
-                            <span class="text-gray-400">المدرسة / School</span>
+                            <span class="text-gray-400">{{ __('filament-events.pages.scan_page.school_label') }}</span>
                             <span id="res-school" class="font-bold text-gray-700 dark:text-gray-200">ثانوية الأمير فيصل</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-400">وقت التحضير / Time</span>
+                            <span class="text-gray-400">{{ __('filament-events.pages.scan_page.time_label') }}</span>
                             <span id="res-time" class="font-bold text-gray-700 dark:text-gray-200">14:22:15</span>
                         </div>
                     </div>
@@ -217,7 +217,7 @@
             <div class="mt-6 border-t border-gray-100 dark:border-gray-800 pt-4">
                 <a href="{{ \App\Filament\Resources\EventResource::getUrl('edit', ['record' => $record]) }}" class="w-full flex items-center justify-center gap-2 text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    العودة لصفحة الفعالية / Back to Event
+                    {{ __('filament-events.pages.scan_page.back_to_event') }}
                 </a>
             </div>
         </div>
@@ -281,10 +281,10 @@
                         cameraSelect.appendChild(option);
                     });
                 } else {
-                    cameraSelect.innerHTML = '<option value="">لم يتم العثور على كاميرات / No camera found</option>';
+                    cameraSelect.innerHTML = '<option value="">{{ __('filament-events.pages.scan_page.no_camera_found') }}</option>';
                 }
             }).catch(err => {
-                cameraSelect.innerHTML = '<option value="">فشل الوصول للكاميرا / Camera access blocked</option>';
+                cameraSelect.innerHTML = '<option value="">{{ __('filament-events.pages.scan_page.camera_access_blocked') }}</option>';
             });
 
             startBtn.addEventListener('click', () => {
@@ -314,8 +314,8 @@
                     scannerIndicator.classList.remove('bg-gray-400');
                     scannerIndicator.classList.add('bg-emerald-500', 'pulse-active');
                     
-                    statusTitle.innerText = "جاري الكشف... / Scanning...";
-                    statusMessage.innerText = "ضع الرمز في منتصف إطار الكاميرا للتحقق التلقائي";
+                    statusTitle.innerText = "{{ __('filament-events.pages.scan_page.scanning') }}";
+                    statusMessage.innerText = "{{ __('filament-events.pages.scan_page.scanning_hint') }}";
                 }).catch(err => {
                     console.error(err);
                 });
@@ -329,8 +329,8 @@
                     scannerIndicator.classList.remove('bg-emerald-500', 'pulse-active');
                     scannerIndicator.classList.add('bg-gray-400');
                     
-                    statusTitle.innerText = "في انتظار البدء... / Standby";
-                    statusMessage.innerText = "انقر على تشغيل الكاميرا لبدء فحص رموز التذاكر";
+                    statusTitle.innerText = "{{ __('filament-events.pages.scan_page.standby') }}";
+                    statusMessage.innerText = "{{ __('filament-events.pages.scan_page.standby_hint') }}";
                 });
             });
 
@@ -344,7 +344,7 @@
                 // Update indicator status
                 statusContainer.classList.remove('hidden');
                 attendeeCard.classList.add('hidden');
-                statusTitle.innerText = "جاري التحقق... / Validating...";
+                statusTitle.innerText = "{{ __('filament-events.pages.scan_page.validating') }}";
                 
                 fetch('{{ route("api.attendance.scan") }}', {
                     method: 'POST',
@@ -355,7 +355,7 @@
                     body: JSON.stringify({
                         qr_hash: qrHash,
                         event_id: '{{ $record->id }}', // Enforce specific event ID check!
-                        device: 'ماسح الفعالية / Event Scanner'
+                        device: '{{ __('filament-events.pages.scan_page.device_label') }}'
                     })
                 })
                 .then(res => res.json())
@@ -386,14 +386,14 @@
                         }, 3500);
                     } else {
                         playSound('error');
-                        statusTitle.innerText = "فشل المسح / Scan Failed";
+                        statusTitle.innerText = "{{ __('filament-events.pages.scan_page.scan_failed') }}";
                         statusMessage.innerText = data.message;
                     }
                 })
                 .catch(err => {
                     playSound('error');
-                    statusTitle.innerText = "خطأ اتصال / Connection Error";
-                    statusMessage.innerText = "فشل التحقق بسبب مشكلة في الاتصال بالخادم.";
+                    statusTitle.innerText = "{{ __('filament-events.pages.scan_page.connection_error') }}";
+                    statusMessage.innerText = "{{ __('filament-events.pages.scan_page.connection_error_hint') }}";
                 });
             }
         });

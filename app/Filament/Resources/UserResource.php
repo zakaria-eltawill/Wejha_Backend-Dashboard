@@ -21,7 +21,17 @@ class UserResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'إدارة المستخدمين / Users';
+        return __('filament-users.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament-users.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-users.plural_model_label');
     }
 
     public static function canViewAny(): bool
@@ -36,80 +46,80 @@ class UserResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('الاسم بالكامل / Full Name')
+                            ->label(__('filament-users.fields.name'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('username')
-                            ->label('اسم المستخدم / Username')
+                            ->label(__('filament-users.fields.username'))
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('email')
-                            ->label('البريد الإلكتروني / Email')
+                            ->label(__('filament-users.fields.email'))
                             ->email()
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('password')
-                            ->label('كلمة المرور / Password')
+                            ->label(__('filament-users.fields.password'))
                             ->password()
                             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $context): bool => $context === 'create')
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone_number')
-                            ->label('رقم الجوال / Phone')
+                            ->label(__('filament-users.fields.phone_number'))
                             ->tel()
                             ->maxLength(255),
                         Forms\Components\Select::make('gender')
-                            ->label('الجنس / Gender')
+                            ->label(__('filament-users.fields.gender'))
                             ->options([
-                                'male' => 'ذكر / Male',
-                                'female' => 'أنثى / Female',
+                                'male' => __('filament-users.gender.male'),
+                                'female' => __('filament-users.gender.female'),
                             ]),
                         Forms\Components\TextInput::make('academic_year')
-                            ->label('السنة الدراسية / Year')
+                            ->label(__('filament-users.fields.academic_year'))
                             ->maxLength(255),
                         Forms\Components\TextInput::make('school_name')
-                            ->label('المدرسة / School')
+                            ->label(__('filament-users.fields.school_name'))
                             ->maxLength(255),
                         Forms\Components\Select::make('specialization')
-                            ->label('التخصص / Specialization')
+                            ->label(__('filament-users.fields.specialization'))
                             ->options([
-                                'علمي' => 'علمي / Scientific',
-                                'أدبي' => 'أدبي / Literary',
+                                'علمي' => __('filament-users.specialization.scientific'),
+                                'أدبي' => __('filament-users.specialization.literary'),
                             ]),
                         Forms\Components\Select::make('status')
-                            ->label('الحالة / Status')
+                            ->label(__('filament-users.fields.status'))
                             ->options([
-                                'active' => 'نشط / Active',
-                                'inactive' => 'غير نشط / Inactive',
-                                'suspended' => 'معلق / Suspended',
+                                'active' => __('filament-users.status.active'),
+                                'inactive' => __('filament-users.status.inactive'),
+                                'suspended' => __('filament-users.status.suspended'),
                             ])
                             ->required()
                             ->default('active'),
                         Forms\Components\Select::make('preferred_language')
-                            ->label('اللغة المفضلة / Language')
+                            ->label(__('filament-users.fields.preferred_language'))
                             ->options([
-                                'ar' => 'العربية / Arabic',
-                                'en' => 'الإنجليزية / English',
+                                'ar' => __('filament-users.language.ar'),
+                                'en' => __('filament-users.language.en'),
                              ])
                             ->default('ar'),
                         Forms\Components\Select::make('preferred_theme')
-                            ->label('المظهر / Theme')
+                            ->label(__('filament-users.fields.preferred_theme'))
                             ->options([
-                                'light' => 'فاتح / Light',
-                                'dark' => 'داكن / Dark',
-                                'system' => 'النظام / System',
+                                'light' => __('filament-users.theme.light'),
+                                'dark' => __('filament-users.theme.dark'),
+                                'system' => __('filament-users.theme.system'),
                             ])
                             ->default('system'),
                         Forms\Components\Select::make('roles')
-                            ->label('الأدوار / Roles')
+                            ->label(__('filament-users.fields.roles'))
                             ->multiple()
                             ->relationship('roles', 'name')
                             ->preload(),
                         Forms\Components\FileUpload::make('avatar')
-                            ->label('الصورة الشخصية / Avatar')
+                            ->label(__('filament-users.fields.avatar'))
                             ->image()
                             ->directory('avatars'),
                     ])->columns(2)
@@ -121,33 +131,33 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
-                    ->label('الصورة / Avatar')
+                    ->label(__('filament-users.table.avatar'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('الاسم / Name')
+                    ->label(__('filament-users.table.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('username')
-                    ->label('اسم المستخدم / Username')
+                    ->label(__('filament-users.fields.username'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->label('البريد الإلكتروني / Email')
+                    ->label(__('filament-users.fields.email'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone_number')
-                    ->label('رقم الجوال / Phone')
+                    ->label(__('filament-users.fields.phone_number'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('school_name')
-                    ->label('المدرسة / School')
+                    ->label(__('filament-users.fields.school_name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('specialization')
-                    ->label('التخصص / Track')
+                    ->label(__('filament-users.table.specialization'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('الحالة / Status')
+                    ->label(__('filament-users.fields.status'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'active' => 'success',
@@ -156,11 +166,11 @@ class UserResource extends Resource
                         default => 'primary',
                     }),
                 Tables\Columns\TextColumn::make('roles.name')
-                    ->label('الدور / Role')
+                    ->label(__('filament-users.table.role'))
                     ->badge()
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('تاريخ الإنشاء / Created')
+                    ->label(__('filament-users.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -168,9 +178,9 @@ class UserResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'active' => 'نشط / Active',
-                        'inactive' => 'غير نشط / Inactive',
-                        'suspended' => 'معلق / Suspended',
+                        'active' => __('filament-users.status.active'),
+                        'inactive' => __('filament-users.status.inactive'),
+                        'suspended' => __('filament-users.status.suspended'),
                     ]),
             ])
             ->actions([

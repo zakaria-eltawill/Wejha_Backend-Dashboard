@@ -20,7 +20,17 @@ class PermissionResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'الأذونات / Permissions';
+        return __('filament-roles-permissions.permissions.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament-roles-permissions.permissions.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-roles-permissions.permissions.plural_model_label');
     }
 
     public static function canViewAny(): bool
@@ -35,12 +45,12 @@ class PermissionResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('اسم الصلاحية / Permission Name')
+                            ->label(__('filament-roles-permissions.permissions.fields.name'))
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('guard_name')
-                            ->label('الحارس / Guard')
+                            ->label(__('filament-roles-permissions.permissions.fields.guard_name'))
                             ->required()
                             ->default('web')
                             ->maxLength(255),
@@ -53,11 +63,11 @@ class PermissionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('اسم الصلاحية / Permission Name')
+                    ->label(__('filament-roles-permissions.permissions.table.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('guard_name')
-                    ->label('الحارس / Guard')
+                    ->label(__('filament-roles-permissions.permissions.table.guard_name'))
                     ->searchable(),
             ])
             ->actions([

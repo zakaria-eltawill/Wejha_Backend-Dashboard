@@ -14,7 +14,7 @@ class ActivitiesRelationManager extends RelationManager
 
     public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
     {
-        return 'سجل الأنشطة والخط الزمني / Timeline & Activity Log';
+        return __('filament-events.relation_managers.activities.title');
     }
 
     public function table(Table $table): Table
@@ -23,16 +23,16 @@ class ActivitiesRelationManager extends RelationManager
             ->recordTitleAttribute('description_ar')
             ->columns([
                 Tables\Columns\TextColumn::make('description_ar')
-                    ->label('النشاط (AR)')
+                    ->label(__('filament-events.table.columns.activity_ar'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description_en')
-                    ->label('Activity (EN)')
+                    ->label(__('filament-events.table.columns.activity_en'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('occurred_at')
-                    ->label('التاريخ والوقت / Time')
+                    ->label(__('filament-events.table.columns.occurred_at'))
                     ->dateTime()
                     ->sortable(),
             ])

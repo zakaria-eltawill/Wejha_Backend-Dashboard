@@ -10,8 +10,12 @@ use Filament\Widgets\ChartWidget;
 class TopSchoolsChart extends ChartWidget
 {
     protected static ?int $sort = 4;
-    protected static ?string $heading = 'المدارس الأكثر مشاركة / Top Schools';
     protected static ?string $maxHeight = '250px';
+
+    public function getHeading(): string | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return __('filament-widgets.top_schools.heading');
+    }
 
     protected function getData(): array
     {

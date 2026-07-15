@@ -99,7 +99,7 @@
             <div class="flex items-center gap-3 w-full justify-between border-b border-gray-100 dark:border-gray-800 pb-4 mb-6">
                 <div class="flex items-center gap-2">
                     <div id="scanner-indicator" class="w-2.5 h-2.5 rounded-full bg-gray-400"></div>
-                    <h3 class="text-base font-bold text-gray-800 dark:text-gray-200">كاميرا المسح النشطة / Active Scanner</h3>
+                    <h3 class="text-base font-bold text-gray-800 dark:text-gray-200">{{ __('filament-pages.qr_scanner.active_scanner') }}</h3>
                 </div>
                 <span class="text-xs text-gray-400">نظام التحضير الفوري</span>
             </div>
@@ -125,11 +125,11 @@
                 <!-- Camera Select Dropdown -->
                 <div>
                     <label for="camera-select" class="block text-xs font-bold text-gray-500 mb-1.5 dark:text-gray-400">
-                        اختر الكاميرا المفضلة / Select Camera Source
+                        {{ __('filament-pages.qr_scanner.select_camera') }}
                     </label>
                     <div class="relative rounded-xl shadow-sm">
                         <select id="camera-select" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-300 focus:ring-primary-500 focus:border-primary-500">
-                            <option value="">جاري تحميل الكاميرات... / Loading cameras...</option>
+                            <option value="">{{ __('filament-pages.qr_scanner.loading_cameras') }}</option>
                         </select>
                     </div>
                 </div>
@@ -138,18 +138,18 @@
                 <div class="grid grid-cols-2 gap-4">
                     <button id="start-btn" class="bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-indigo-950 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        تشغيل الكاميرا / Start
+                        {{ __('filament-pages.qr_scanner.start') }}
                     </button>
                     <button id="stop-btn" class="bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 dark:from-gray-800 dark:to-gray-700 dark:hover:from-gray-700 dark:hover:to-gray-600 text-gray-700 dark:text-gray-200 font-bold py-3 px-6 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                        إيقاف الكاميرا / Stop
+                        {{ __('filament-pages.qr_scanner.stop') }}
                     </button>
                 </div>
 
                 <!-- Divider -->
                 <div class="relative flex py-2 items-center">
                     <div class="flex-grow border-t border-gray-100 dark:border-gray-800"></div>
-                    <span class="flex-shrink mx-4 text-gray-400 text-xs">أو التحقق اليدوي / Manual Entry</span>
+                    <span class="flex-shrink mx-4 text-gray-400 text-xs">{{ __('filament-pages.qr_scanner.manual_entry_divider') }}</span>
                     <div class="flex-grow border-t border-gray-100 dark:border-gray-800"></div>
                 </div>
 
@@ -157,7 +157,7 @@
                 <div class="flex gap-2">
                     <input type="text" id="manual-hash-input" placeholder="أدخل رمز التذكرة اليدوي..." class="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-300 focus:ring-primary-500 focus:border-primary-500">
                     <button id="manual-submit-btn" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all shadow-sm">
-                        تحقق / Verify
+                        {{ __('filament-pages.qr_scanner.verify') }}
                     </button>
                 </div>
 
@@ -168,7 +168,7 @@
         <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm min-h-[460px] flex flex-col justify-between">
             <div>
                 <h3 class="text-base font-bold text-gray-800 dark:text-gray-200 border-b border-gray-100 dark:border-gray-800 pb-4 mb-6">
-                    حالة البطاقة والمسح / Validation Details
+                    {{ __('filament-pages.qr_scanner.validation_details') }}
                 </h3>
 
                 <!-- Idle/Waiting state -->
@@ -188,7 +188,7 @@
                         <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg check-anim">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <span class="font-bold text-sm">تم تأكيد حضور الطالب / Check-in OK</span>
+                        <span class="font-bold text-sm">{{ __('filament-pages.qr_scanner.check_in_ok') }}</span>
                     </div>
 
                     <!-- Attendee avatar circle and details -->
@@ -201,11 +201,11 @@
 
                     <div class="space-y-3 text-xs border-t border-emerald-100 dark:border-emerald-900/30 pt-4">
                         <div class="flex justify-between">
-                            <span class="text-gray-400">المدرسة / School</span>
+                            <span class="text-gray-400">{{ __('filament-pages.qr_scanner.school_label') }}</span>
                             <span id="res-school" class="font-bold text-gray-700 dark:text-gray-200">ثانوية الأمير فيصل</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-400">وقت التحضير / Time</span>
+                            <span class="text-gray-400">{{ __('filament-pages.qr_scanner.time_label') }}</span>
                             <span id="res-time" class="font-bold text-gray-700 dark:text-gray-200">14:22:15</span>
                         </div>
                     </div>
