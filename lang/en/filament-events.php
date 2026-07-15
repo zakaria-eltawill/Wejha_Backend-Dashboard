@@ -27,10 +27,13 @@ return [
         'featured' => 'Featured',
         'banner_image' => 'Banner Image',
         'cover_image' => 'Cover Image',
-        'event_date' => 'Date',
-        'event_time' => 'Time',
+        'event_date' => 'Start Date',
+        'event_time' => 'Start Time',
+        'end_date' => 'End Date',
+        'end_time' => 'End Time',
         'venue' => 'Venue',
         'venue_map_url' => 'Map URL',
+        'recording_url' => 'Recorded Video URL',
         'capacity' => 'Capacity',
         'registration_opens_at' => 'Registration Opens',
         'registration_closes_at' => 'Registration Closes',
@@ -60,6 +63,9 @@ return [
     'helper_texts' => [
         'pre_survey' => 'Shown to the student when they register. Leave empty for none.',
         'post_survey' => 'Shown to the student after they check in. Leave empty for none.',
+        'end_date' => 'Leave empty for a single-day event. Set it for an event spanning multiple days.',
+        'end_time' => 'The time the event actually ends. Used to determine when the event is considered over and new registrations are blocked.',
+        'recording_url' => 'An external video link (YouTube / Google Drive / Vimeo) shown to students only after the event has ended, for those who could not attend.',
     ],
 
     'type' => [
@@ -79,11 +85,17 @@ return [
         'private' => 'Private',
     ],
 
+    'event_state' => [
+        'ended' => 'Ended',
+        'upcoming' => 'Upcoming',
+    ],
+
     'table' => [
         'columns' => [
             'title_ar' => 'Title (Arabic)',
             'type' => 'Type',
             'event_date' => 'Date',
+            'has_ended' => 'Timing',
             'capacity' => 'Capacity',
             'featured' => 'Featured',
             'activity_ar' => 'Activity (Arabic)',

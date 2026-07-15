@@ -28,29 +28,27 @@ class ArchivePastEvents extends Command
      */
     public function handle()
     {
+        // Only consider events whose start has passed as archive candidates (cheap DB
+        // pre-filter); the true end-of-event check (which accounts for end_date/end_time
+        // on multi-day/multi-hour events) is done in PHP via Event::hasEnded().
         $now = Carbon::now(config('app.timezone', 'Africa/Tripoli'));
-        $todayDate = $now->toDateString();
-        $currentTime = $now->toTimeString();
 
-        // Get events that are published but their date is in the past,
-        // OR their date is today but their time has already passed.
-        $eventsToArchive = Event::where('status', EventStatus::PUBLISHED)
-            ->where(function ($query) use ($todayDate, $currentTime) {
-                $query->where('event_date', '<', $todayDate)
-                    ->orWhere(function ($q) use ($todayDate, $currentTime) {
-                        $q->where('event_date', $todayDate)
-                            ->where('event_time', '<', $currentTime);
-                    });
-            })
+        $candidates = Event::where('status', EventStatus::PUBLISHED)
+            ->where('event_date', '<=', $now->toDateString())
             ->get();
 
-        $count = $eventsToArchive->count();
+        $count = 0;
 
-        foreach ($eventsToArchive as $event) {
+        foreach ($candidates as $event) {
+            if (!$event->hasEnded()) {
+                continue;
+            }
+
             $event->update([
                 'status' => EventStatus::ARCHIVED,
             ]);
             $this->info("Archived event: {$event->title_ar} (ID: {$event->id})");
+            $count++;
         }
 
         $this->info("Successfully archived {$count} past events.");

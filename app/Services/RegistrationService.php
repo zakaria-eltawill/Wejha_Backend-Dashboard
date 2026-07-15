@@ -41,6 +41,9 @@ class RegistrationService
 
             // 2. Check Dates
             $now = now();
+            if ($event->hasEnded()) {
+                throw new \InvalidArgumentException('This event has already ended.');
+            }
             if ($event->registration_opens_at && $now->lt($event->registration_opens_at)) {
                 throw new \InvalidArgumentException('Registration is not open yet.');
             }

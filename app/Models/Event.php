@@ -31,8 +31,11 @@ class Event extends Model
         'speaker',
         'event_date',
         'event_time',
+        'end_date',
+        'end_time',
         'venue',
         'venue_map_url',
+        'recording_url',
         'capacity',
         'registration_opens_at',
         'registration_closes_at',
@@ -51,6 +54,7 @@ class Event extends Model
         return [
             'type' => EventType::class,
             'event_date' => 'date',
+            'end_date' => 'date',
             'registration_opens_at' => 'datetime',
             'registration_closes_at' => 'datetime',
             'qr_attendance_enabled' => 'boolean',
@@ -58,6 +62,41 @@ class Event extends Model
             'status' => EventStatus::class,
             'featured' => 'boolean',
         ];
+    }
+
+    /**
+     * The effective start datetime of the event (event_date + event_time).
+     */
+    public function startsAt(): \Carbon\Carbon
+    {
+        return \Carbon\Carbon::parse(
+            $this->event_date->toDateString() . ' ' . ($this->event_time ?? '00:00:00'),
+            config('app.timezone', 'Africa/Tripoli')
+        );
+    }
+
+    /**
+     * The effective end datetime of the event. Falls back to end_time on the same day
+     * (or 23:59:59 if no end_time at all) when only end_date is set, and falls back to
+     * event_date/event_time entirely for single-point-in-time events with no duration set.
+     */
+    public function endsAt(): \Carbon\Carbon
+    {
+        $endDate = $this->end_date ?? $this->event_date;
+        $endTime = $this->end_time ?? $this->event_time ?? '23:59:59';
+
+        return \Carbon\Carbon::parse(
+            $endDate->toDateString() . ' ' . $endTime,
+            config('app.timezone', 'Africa/Tripoli')
+        );
+    }
+
+    /**
+     * Whether the event's actual end datetime has passed.
+     */
+    public function hasEnded(): bool
+    {
+        return \Carbon\Carbon::now(config('app.timezone', 'Africa/Tripoli'))->gt($this->endsAt());
     }
 
     /**

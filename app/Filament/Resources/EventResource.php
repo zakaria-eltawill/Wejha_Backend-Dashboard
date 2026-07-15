@@ -103,11 +103,22 @@ class EventResource extends Resource
                         ->schema([
                             Forms\Components\DatePicker::make('event_date')
                                 ->label(__('filament-events.fields.event_date'))
-                                ->required(),
+                                ->required()
+                                ->live(),
                             Forms\Components\TextInput::make('event_time')
                                 ->label(__('filament-events.fields.event_time'))
                                 ->placeholder('HH:MM')
                                 ->required(),
+                            Forms\Components\DatePicker::make('end_date')
+                                ->label(__('filament-events.fields.end_date'))
+                                ->helperText(__('filament-events.helper_texts.end_date'))
+                                ->minDate(fn (callable $get) => $get('event_date'))
+                                ->nullable(),
+                            Forms\Components\TextInput::make('end_time')
+                                ->label(__('filament-events.fields.end_time'))
+                                ->placeholder('HH:MM')
+                                ->helperText(__('filament-events.helper_texts.end_time'))
+                                ->nullable(),
                             Forms\Components\TextInput::make('venue')
                                 ->label(__('filament-events.fields.venue'))
                                 ->required()
@@ -121,6 +132,12 @@ class EventResource extends Resource
                                 ->numeric()
                                 ->required()
                                 ->default(100),
+                            Forms\Components\TextInput::make('recording_url')
+                                ->label(__('filament-events.fields.recording_url'))
+                                ->helperText(__('filament-events.helper_texts.recording_url'))
+                                ->url()
+                                ->maxLength(2048)
+                                ->columnSpanFull(),
                         ])->columns(2),
 
                     Wizard\Step::make(__('filament-events.steps.registration'))
@@ -219,6 +236,13 @@ class EventResource extends Resource
                     ->label(__('filament-events.table.columns.event_date'))
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('has_ended')
+                    ->label(__('filament-events.table.columns.has_ended'))
+                    ->state(fn (Event $record): string => $record->hasEnded()
+                        ? __('filament-events.event_state.ended')
+                        : __('filament-events.event_state.upcoming'))
+                    ->badge()
+                    ->color(fn (Event $record): string => $record->hasEnded() ? 'gray' : 'success'),
                 Tables\Columns\TextColumn::make('venue')
                     ->label(__('filament-events.fields.venue'))
                     ->searchable(),
