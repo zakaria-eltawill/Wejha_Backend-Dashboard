@@ -55,13 +55,8 @@ class ListSurveyTemplates extends ListRecords
                                 'type' => $q['type'] ?? 'text',
                                 'question_text_ar' => $q['question_text_ar'] ?? 'سؤال',
                                 'question_text_en' => $q['question_text_en'] ?? 'Question',
-                                'description_ar' => $q['description_ar'] ?? null,
-                                'description_en' => $q['description_en'] ?? null,
-                                'help_text_ar' => $q['help_text_ar'] ?? null,
-                                'help_text_en' => $q['help_text_en'] ?? null,
                                 'options' => $q['options'] ?? null,
                                 'is_required' => $q['is_required'] ?? true,
-                                'score' => $q['score'] ?? 0,
                                 'sort_order' => $q['sort_order'] ?? 0,
                             ];
                         }

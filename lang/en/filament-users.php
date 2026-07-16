@@ -1,11 +1,17 @@
 <?php
 
 return [
-    'navigation' => [
-        'label' => 'Users',
+    'staff' => [
+        'navigation' => ['label' => 'Staff & Admins'],
+        'model_label' => 'Staff User',
+        'plural_model_label' => 'Staff Users',
     ],
-    'model_label' => 'User',
-    'plural_model_label' => 'Users',
+    'students' => [
+        'navigation' => ['label' => 'Students'],
+        'model_label' => 'Student',
+        'plural_model_label' => 'Students',
+    ],
+    'super_admin_protected' => 'The Super Admin is protected: their roles cannot be changed and they cannot be deleted from the system.',
     'fields' => [
         'name' => 'Full Name',
         'username' => 'Username',

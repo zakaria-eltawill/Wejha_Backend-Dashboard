@@ -83,8 +83,11 @@ class ReportService
         $dom->loadHTML('<?xml encoding="utf-8" ?>' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         
         $xpath = new \DOMXPath($dom);
-        // Extract text nodes excluding style/script blocks
-        $textNodes = $xpath->query('//text()[not(parent::style or parent::script)]');
+        // Extract text nodes excluding style/script blocks and <title> — the <title> tag becomes
+        // the PDF's Document Info "Title" metadata, which PDF viewers render with their own correct
+        // bidi algorithm; shaping it (which is only needed to work around dompdf's own broken RTL
+        // canvas rendering) makes it display garbled/reversed there instead of fixing anything.
+        $textNodes = $xpath->query('//text()[not(parent::style or parent::script or parent::title)]');
         
         foreach ($textNodes as $node) {
             $text = $node->nodeValue;

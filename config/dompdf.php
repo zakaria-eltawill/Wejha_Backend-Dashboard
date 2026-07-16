@@ -63,8 +63,15 @@ return [
          * The directory specified must be writeable by the webserver process.
          * The temporary directory is required to download remote images and when
          * using the PDFLib back end.
+         *
+         * Explicitly pointed at a storage/ path instead of sys_get_temp_dir(): on this
+         * environment, PHP's built-in dev server (php artisan serve) resolves the system
+         * temp dir to a non-writable location (C:\WINDOWS on Windows when TEMP/TMP aren't
+         * inherited by the server process), which made dompdf silently fail to embed any
+         * image (e.g. the report logo) with no thrown exception. storage_path() is always
+         * writable by the app and doesn't depend on the OS/environment's temp resolution.
          */
-        'temp_dir' => sys_get_temp_dir(),
+        'temp_dir' => storage_path('app/dompdf-temp'),
 
         /**
          * ==== IMPORTANT ====

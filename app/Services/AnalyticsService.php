@@ -64,7 +64,10 @@ class AnalyticsService
                 [
                     'label' => 'معدل الحضور',
                     'data' => [$attended, $absent],
-                    'backgroundColor' => ['#001F8F', '#FF4900'],
+                    'backgroundColor' => ['#2452C4', '#FF4900'],
+                    'borderColor' => '#fcfcfb',
+                    'borderWidth' => 2,
+                    'hoverOffset' => 6,
                 ]
             ]
         ];

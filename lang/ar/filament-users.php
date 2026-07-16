@@ -1,11 +1,17 @@
 <?php
 
 return [
-    'navigation' => [
-        'label' => 'إدارة المستخدمين',
+    'staff' => [
+        'navigation' => ['label' => 'الإداريون والموظفون'],
+        'model_label' => 'مستخدم إداري',
+        'plural_model_label' => 'مستخدمون إداريون',
     ],
-    'model_label' => 'مستخدم',
-    'plural_model_label' => 'مستخدمين',
+    'students' => [
+        'navigation' => ['label' => 'الطلاب'],
+        'model_label' => 'طالب',
+        'plural_model_label' => 'طلاب',
+    ],
+    'super_admin_protected' => 'المدير العام (Super Admin) محمي: لا يمكن تغيير أدواره أو حذفه من النظام.',
     'fields' => [
         'name' => 'الاسم بالكامل',
         'username' => 'اسم المستخدم',

@@ -34,7 +34,6 @@ return [
     'sections' => [
         'questions_heading' => 'Survey Questions',
         'questions_description' => 'Add your questions one at a time. Drag to reorder.',
-        'additional_details' => 'Additional details (optional)',
     ],
 
     'question_fields' => [
@@ -47,11 +46,6 @@ return [
         'option_value' => 'Option',
         'is_required' => 'Required question?',
         'is_required_helper' => 'Student cannot submit the survey without answering this.',
-        'description_ar' => 'Description (Arabic)',
-        'description_en' => 'Description (English)',
-        'help_text_ar' => 'Help text (Arabic)',
-        'help_text_en' => 'Help text (English)',
-        'score' => 'Score',
         'new_question_label' => 'New question',
     ],
 

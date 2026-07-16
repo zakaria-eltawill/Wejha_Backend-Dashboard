@@ -34,7 +34,6 @@ return [
     'sections' => [
         'questions_heading' => 'أسئلة الاستبيان',
         'questions_description' => 'أضف أسئلتك واحدًا تلو الآخر. اسحب من المقبض 🟰 لإعادة الترتيب.',
-        'additional_details' => 'تفاصيل إضافية (اختياري)',
     ],
 
     'question_fields' => [
@@ -47,11 +46,6 @@ return [
         'option_value' => 'الخيار',
         'is_required' => 'سؤال إجباري؟',
         'is_required_helper' => 'لن يتمكن الطالب من إرسال الاستبيان دون الإجابة على هذا السؤال.',
-        'description_ar' => 'وصف/توضيح بالعربية',
-        'description_en' => 'وصف/توضيح بالإنجليزية',
-        'help_text_ar' => 'نص مساعد بالعربية',
-        'help_text_en' => 'نص مساعد بالإنجليزية',
-        'score' => 'الدرجة',
         'new_question_label' => 'سؤال جديد',
     ],
 

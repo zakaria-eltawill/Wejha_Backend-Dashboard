@@ -171,9 +171,13 @@
     <div class="section-title">إجابات المشاركين حسب الأسئلة / Survey Submissions by Question</div>
 
     @forelse($evaluation->template->questions as $question)
-        <!-- Question Section Title -->
-        <div class="section-title" style="margin-top: 15px; margin-bottom: 8px; font-size: 11px; color: #FF4900;">
-            س: {{ $question->question_text_ar }} ({{ $question->question_text_en }})
+        <!-- Question Section Title: Arabic and English kept on separate lines/text nodes
+             (mixing RTL Arabic + LTR English in one line breaks under dompdf's bidi shaping) -->
+        <div class="section-title" style="margin-top: 15px; margin-bottom: 2px; font-size: 12px; color: #FF4900;">
+            {{ $loop->iteration }}. {{ $question->question_text_ar }}
+        </div>
+        <div style="margin-bottom: 8px; font-size: 9px; color: #9ca3af; text-transform: uppercase; text-align: right; padding-right: 11px;">
+            {{ $question->question_text_en }}
         </div>
 
         <!-- Responses Data Table (Visually RTL in LTR mode) -->

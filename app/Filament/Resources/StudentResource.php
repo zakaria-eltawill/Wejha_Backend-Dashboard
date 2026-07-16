@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -13,25 +12,25 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
 
-class UserResource extends Resource
+class StudentResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-    protected static ?int $navigationSort = 6;
+    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+    protected static ?int $navigationSort = 5;
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-users.staff.navigation.label');
+        return __('filament-users.students.navigation.label');
     }
 
     public static function getModelLabel(): string
     {
-        return __('filament-users.staff.model_label');
+        return __('filament-users.students.model_label');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('filament-users.staff.plural_model_label');
+        return __('filament-users.students.plural_model_label');
     }
 
     public static function canViewAny(): bool
@@ -40,20 +39,11 @@ class UserResource extends Resource
     }
 
     /**
-     * The single Super Admin account is permanent and can never be deleted.
-     */
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
-    {
-        return !$record->hasRole('Super Admin');
-    }
-
-    /**
-     * This resource shows everyone EXCEPT students — students have their own
-     * dedicated StudentResource with a simpler, student-focused table/form.
+     * Only ever shows users with the Student role — staff/admins live in UserResource.
      */
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return parent::getEloquentQuery()->whereDoesntHave('roles', fn ($q) => $q->where('name', 'Student'));
+        return parent::getEloquentQuery()->whereHas('roles', fn ($q) => $q->where('name', 'Student'));
     }
 
     public static function form(Form $form): Form
@@ -94,6 +84,18 @@ class UserResource extends Resource
                                 'male' => __('filament-users.gender.male'),
                                 'female' => __('filament-users.gender.female'),
                             ]),
+                        Forms\Components\TextInput::make('academic_year')
+                            ->label(__('filament-users.fields.academic_year'))
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('school_name')
+                            ->label(__('filament-users.fields.school_name'))
+                            ->maxLength(255),
+                        Forms\Components\Select::make('specialization')
+                            ->label(__('filament-users.fields.specialization'))
+                            ->options([
+                                'علمي' => __('filament-users.specialization.scientific'),
+                                'أدبي' => __('filament-users.specialization.literary'),
+                            ]),
                         Forms\Components\Select::make('status')
                             ->label(__('filament-users.fields.status'))
                             ->options([
@@ -118,23 +120,6 @@ class UserResource extends Resource
                                 'system' => __('filament-users.theme.system'),
                             ])
                             ->default('system'),
-                        Forms\Components\Select::make('roles')
-                            ->label(__('filament-users.fields.roles'))
-                            ->multiple()
-                            ->relationship(
-                                'roles',
-                                'name',
-                                modifyQueryUsing: fn (\Illuminate\Database\Eloquent\Builder $query) => $query->whereIn('name', ['Admin', 'Coordinator']),
-                            )
-                            ->preload()
-                            // Super Admin is a protected, single, permanent account: it can't be created or
-                            // reassigned from here (only Admin/Coordinator are offered above), and its own
-                            // existing Super Admin role must never be touched/stripped by saving this form.
-                            ->disabled(fn (?User $record) => $record?->hasRole('Super Admin') ?? false)
-                            ->dehydrated(fn (?User $record) => !($record?->hasRole('Super Admin') ?? false))
-                            ->helperText(fn (?User $record) => ($record?->hasRole('Super Admin') ?? false)
-                                ? __('filament-users.super_admin_protected')
-                                : null),
                         Forms\Components\FileUpload::make('avatar')
                             ->label(__('filament-users.fields.avatar'))
                             ->image()
@@ -165,6 +150,14 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('phone_number')
                     ->label(__('filament-users.fields.phone_number'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('school_name')
+                    ->label(__('filament-users.fields.school_name'))
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('specialization')
+                    ->label(__('filament-users.table.specialization'))
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('filament-users.fields.status'))
                     ->badge()
@@ -174,10 +167,6 @@ class UserResource extends Resource
                         'suspended' => 'danger',
                         default => 'primary',
                     }),
-                Tables\Columns\TextColumn::make('roles.name')
-                    ->label(__('filament-users.table.role'))
-                    ->badge()
-                    ->color('primary'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('filament-users.table.created_at'))
                     ->dateTime()
@@ -191,13 +180,17 @@ class UserResource extends Resource
                         'inactive' => __('filament-users.status.inactive'),
                         'suspended' => __('filament-users.status.suspended'),
                     ]),
+                Tables\Filters\SelectFilter::make('specialization')
+                    ->label(__('filament-users.table.specialization'))
+                    ->options([
+                        'علمي' => __('filament-users.specialization.scientific'),
+                        'أدبي' => __('filament-users.specialization.literary'),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(fn (User $record) => !$record->hasRole('Super Admin')),
+                Tables\Actions\DeleteAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (User $record) => !$record->hasRole('Super Admin'))
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -208,9 +201,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\UserResource\Pages\ListUsers::route('/'),
-            'create' => \App\Filament\Resources\UserResource\Pages\CreateUser::route('/create'),
-            'edit' => \App\Filament\Resources\UserResource\Pages\EditUser::route('/{record}/edit'),
+            'index' => \App\Filament\Resources\StudentResource\Pages\ListStudents::route('/'),
+            'create' => \App\Filament\Resources\StudentResource\Pages\CreateStudent::route('/create'),
+            'edit' => \App\Filament\Resources\StudentResource\Pages\EditStudent::route('/{record}/edit'),
         ];
     }
 }

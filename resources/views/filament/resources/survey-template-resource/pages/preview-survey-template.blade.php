@@ -34,22 +34,18 @@
                     <p style="color: #9ca3af; font-size: 0.85rem; margin: 0 0 8px;">{{ $question->question_text_en }}</p>
                 @endif
 
-                @if($question->description_ar)
-                    <p style="color: #6b7280; font-size: 0.875rem; margin: 4px 0 12px;">{{ $question->description_ar }}</p>
-                @endif
-
                 <div style="margin-top: 12px; pointer-events: none;">
                     @switch($question->type->value)
                         @case('text')
                         @case('email')
                         @case('phone')
                         @case('number')
-                            <input type="text" disabled placeholder="{{ $question->help_text_ar ?? __('filament-surveys.preview.answer_placeholder') }}"
+                            <input type="text" disabled placeholder="{{ __('filament-surveys.preview.answer_placeholder') }}"
                                 style="width: 100%; max-width: 420px; border: none; border-bottom: 1px solid #D1D5DB; padding: 6px 2px; background: transparent; color: #6b7280; font-size: 0.9rem;">
                             @break
 
                         @case('textarea')
-                            <textarea disabled rows="2" placeholder="{{ $question->help_text_ar ?? __('filament-surveys.preview.answer_placeholder') }}"
+                            <textarea disabled rows="2" placeholder="{{ __('filament-surveys.preview.answer_placeholder') }}"
                                 style="width: 100%; border: 1px solid #D1D5DB; border-radius: 6px; padding: 8px 10px; background: #F9FAFC; color: #6b7280; font-size: 0.9rem; resize: none;"></textarea>
                             @break
 

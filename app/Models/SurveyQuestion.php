@@ -23,13 +23,8 @@ class SurveyQuestion extends Model
         'type',
         'question_text_ar',
         'question_text_en',
-        'description_ar',
-        'description_en',
-        'help_text_ar',
-        'help_text_en',
         'options',
         'is_required',
-        'score',
         'sort_order',
     ];
 
@@ -39,7 +34,6 @@ class SurveyQuestion extends Model
             'type' => QuestionType::class,
             'options' => 'array',
             'is_required' => 'boolean',
-            'score' => 'integer',
             'sort_order' => 'integer',
         ];
     }
