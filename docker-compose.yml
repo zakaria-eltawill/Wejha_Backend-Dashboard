@@ -1,0 +1,121 @@
+name: wejha
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: wejha-app:latest
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-80}:8080"
+    env_file:
+      - .env
+    environment:
+      CONTAINER_ROLE: app
+      DB_HOST: db
+      DB_PORT: 5432
+    volumes:
+      - storage_public:/var/www/html/storage/app/public
+      - storage_fonts:/var/www/html/storage/fonts
+      # Firebase service-account credentials: never baked into the image (see
+      # .dockerignore). Place the real file at this path on the host before
+      # `docker compose up -d` — see DOCKER.md.
+      - ./storage/app/firebase-auth.json:/var/www/html/storage/app/firebase-auth.json:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - wejha
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: wejha-app:latest
+    restart: unless-stopped
+    command: ["php", "artisan", "queue:work", "--tries=3", "--max-time=3600", "--sleep=3"]
+    env_file:
+      - .env
+    environment:
+      CONTAINER_ROLE: queue
+      DB_HOST: db
+      DB_PORT: 5432
+    volumes:
+      - storage_public:/var/www/html/storage/app/public
+      - storage_fonts:/var/www/html/storage/fonts
+      # Firebase service-account credentials: never baked into the image (see
+      # .dockerignore). Place the real file at this path on the host before
+      # `docker compose up -d` — see DOCKER.md.
+      - ./storage/app/firebase-auth.json:/var/www/html/storage/app/firebase-auth.json:ro
+    depends_on:
+      # Waits for "app" (not just "db") so migrations have already run — queue
+      # workers hitting a not-yet-migrated table on a fresh deploy would crash.
+      app:
+        condition: service_healthy
+    networks:
+      - wejha
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: wejha-app:latest
+    restart: unless-stopped
+    command: ["php", "artisan", "schedule:work"]
+    env_file:
+      - .env
+    environment:
+      CONTAINER_ROLE: scheduler
+      DB_HOST: db
+      DB_PORT: 5432
+    volumes:
+      - storage_public:/var/www/html/storage/app/public
+      - storage_fonts:/var/www/html/storage/fonts
+      # Firebase service-account credentials: never baked into the image (see
+      # .dockerignore). Place the real file at this path on the host before
+      # `docker compose up -d` — see DOCKER.md.
+      - ./storage/app/firebase-auth.json:/var/www/html/storage/app/firebase-auth.json:ro
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - wejha
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-wejha}
+      POSTGRES_USER: ${DB_USERNAME:-wejha}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-wejha} -d ${DB_DATABASE:-wejha}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - wejha
+    # Not published to the host by default — only the app/queue/scheduler containers
+    # need to reach it, over the internal "wejha" network. Uncomment to allow a host
+    # DB client to connect directly (e.g. for ad-hoc debugging):
+    # ports:
+    #   - "127.0.0.1:5432:5432"
+
+networks:
+  wejha:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  storage_public:
+  storage_fonts:
